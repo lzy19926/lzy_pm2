@@ -1,4 +1,4 @@
-import type { AppConfig } from "./API"
+import type { AppConfig } from "./ConfigManager"
 
 
 
