@@ -1,5 +1,9 @@
 
 const API = require("../lib/API")
+const path = require("path")
+
+
 
 // 测试
-new API().start("./child_process.js --json --format")
+const scriptPath = path.resolve(__dirname, "./child_process.js")
+new API().start(`${scriptPath} --json --format`)
