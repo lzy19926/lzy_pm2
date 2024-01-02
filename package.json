@@ -1,0 +1,21 @@
+{
+  "name": "lzy_pm2",
+  "version": "1.0.0",
+  "description": "模拟PM2原理,重构新架构的简易Node进程管理器",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lzy19926",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.6"
+  },
+  "dependencies": {
+    "cli-tableau": "^2.0.0"
+  }
+}
