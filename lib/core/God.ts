@@ -3,7 +3,7 @@ import path from 'path'
 import ConfigManager from '../core/ConfigManager'
 import { SocketIPCServer } from '../common/SocketIPC'
 import type { AppConfig } from "./ConfigManager"
-
+import type { IPCMessage } from '../common/SocketIPC'
 
 
 // 用于pm2实际操作的核心模块,由client进行调用
@@ -20,8 +20,27 @@ export default class God {
     appConfig.pid = pid
   }
 
+  // 获取所有process数据
+  sendMonitorInfo() {
+    const procs = this.configManager.getAll()
+    const message: IPCMessage = { type: "data", data: procs }
+    this.IPCServer.sendClient(message)
+  }
+
   // 执行client传来的action
-  execute() { }
+  execute(action: IPCMessage) {
+    const args = action.args || []
+    console.log(`God execute action ${action.action}`);
+
+    switch (action.action) {
+      case "prepare": this.prepare(args[0])
+        break;
+      case "getMonitorInfo": this.sendMonitorInfo()
+        break;
+      default: console.log(`Unknow Action:${action.action}`);
+        break;
+    }
+  }
 
   // 进行通知
   notify() { }

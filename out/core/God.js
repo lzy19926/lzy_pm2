@@ -17,8 +17,28 @@ class God {
         const appConfig = this.configManager.create("Deamon");
         appConfig.pid = pid;
     }
+    // 获取所有process数据
+    sendMonitorInfo() {
+        const procs = this.configManager.getAll();
+        const message = { type: "data", data: procs };
+        this.IPCServer.sendClient(message);
+    }
     // 执行client传来的action
-    execute() { }
+    execute(action) {
+        const args = action.args || [];
+        console.log(`God execute action ${action.action}`);
+        switch (action.action) {
+            case "prepare":
+                this.prepare(args[0]);
+                break;
+            case "getMonitorInfo":
+                this.sendMonitorInfo();
+                break;
+            default:
+                console.log(`Unknow Action:${action.action}`);
+                break;
+        }
+    }
     // 进行通知
     notify() { }
     // forkMode创建进程

@@ -6,6 +6,7 @@ import ProgressManagerClient from '../API/Client';
 // 守护进程通信模块, 用于API调用
 export class SocketIPCServer {
   private _wss?: WebSocketServer
+  private _ws?: WebSocket //TODO 后续可能会房间化
   private god: God
 
   constructor(god: God) {
@@ -20,28 +21,40 @@ export class SocketIPCServer {
 
     wss.on('connection', function connection(ws) {
 
+      that._ws = ws
 
-      ws.on('error', console.error);
+      ws.on('error', that.onError);
 
-
-      // 尝试将所有消息解析为action
-      ws.on('message', function message(data) {
-        try {
-          const action = JSON.parse(data.toString())
-          if (action.action) {
-            that.god.execute(action)
-          }
-        } catch (e) {
-          console.log('Deamon received: %s', data);
-        }
-
-      });
+      ws.on('message', that.onMessage.bind(that));
 
       ws.send('Deamon Connected Success');
     });
 
     console.log("Deamon WS Start SUCCESS , port:7888")
 
+  }
+
+  // 解析客户端传递的消息对象
+  onMessage(data: WebSocket.RawData) {
+    try {
+      const message: IPCMessage = JSON.parse(data.toString())
+      if (message.type == "message") {
+        console.log('Deamon received message: %s', message.message);
+      }
+      else if (message.type == "action") {
+        this.god.execute(message)
+      }
+    } catch (e) {
+      console.log('Deamon received Unknow message: %s', data);
+    }
+  }
+
+  //
+  onError() { console.error }
+
+  // 发送一个Message给客户端
+  sendClient(message: IPCMessage) {
+    this._ws?.send(JSON.stringify(message))
   }
 }
 
@@ -56,31 +69,58 @@ export class SocketIPCClient {
     this._client = client
   }
 
-  connect() {
+  // 异步链接
+  connect(): Promise<boolean> {
     const that = this
-    const ws = new WebSocket('ws://localhost:7888');
-    this._ws = ws
+    return new Promise((resolve, reject) => {
+      const ws = new WebSocket('ws://localhost:7888');
+      this._ws = ws
 
-    // 三次链接错误重试
-    ws.on('error', () => {
-      if (that._retry < 3) {
-        console.log("Client connect failed, retry");
-        setTimeout(() => that.connect(), 500)
+      // 三次链接错误重试
+      ws.on('error', () => {
+        if (that._retry < 3) {
+          console.log("Client connect failed, retry");
+          setTimeout(() => that.connect(), 500)
+        } else {
+          reject(false)
+        }
+      });
+
+      // 首次链接
+      ws.on('open', that.onOpen.bind(that));
+
+      // 接受消息
+      ws.on('message', function message(data) {
+        that.onMessage(data)
+        resolve(true)
+      });
+    })
+
+  }
+
+  // 解析客户端传递的消息对象
+  onMessage(data: WebSocket.RawData) {
+    try {
+      const message: IPCMessage = JSON.parse(data.toString())
+      if (message.type == "message") {
+        console.log('Deamon received message: %s', message.message);
       }
-    });
+      else if (message.type == "data") {
+        console.log(message.data);
+      }
+    } catch (e) {
+      console.log('Client received Unknow message: %s', data);
+    }
+  }
 
-    // 首次链接发送消息,执行prepare
-    ws.on('open', function open() {
-      const message: IPCMessage = { type: "message", message: "Client Connected Success" }
-      that.sendServer(message)
-      const action: IPCMessage = { type: "action", action: "prepare", args: ['11001'] }
-      that.sendServer(action)
-    });
-
-    // 接受消息
-    ws.on('message', function message(data) {
-      console.log('Client received: %s', data);
-    });
+  // 首次链接时的处理 发送消息,执行prepare
+  onOpen() {
+    const message: IPCMessage = { type: "message", message: "Client Connected Success" }
+    this.sendServer(message)
+    const action: IPCMessage = { type: "action", action: "prepare", args: ['11001'] }
+    this.sendServer(action)
+    const action_2: IPCMessage = { type: "action", action: "getMonitorInfo" }
+    this.sendServer(action_2)
   }
 
   // 发送一个Message给服务端
@@ -91,8 +131,9 @@ export class SocketIPCClient {
 
 // 用于Server与Client传递的消息对象
 export interface IPCMessage {
-  type: "message" | "action"
+  type: "message" | "action" | "data"
   message?: string
   action?: string
+  data?: any
   args?: any[]
 }

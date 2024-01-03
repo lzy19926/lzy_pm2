@@ -75,8 +75,6 @@ class API {
         }
     }
     _showTerminalList() {
-        // const procs = this.configManager.getAll()
-        // showTerminalList(procs)
     }
 }
 exports.default = API;

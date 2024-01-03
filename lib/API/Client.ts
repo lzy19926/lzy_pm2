@@ -19,7 +19,7 @@ export default class ProgressManagerClient {
   }
 
   // 启动一个PM2客户端作为守护进程
-  launchDaemon() {
+  async launchDaemon() {
     if (this._checkDaemon()) return
 
     const deamonPID = this._createDaemon().pid
@@ -27,11 +27,14 @@ export default class ProgressManagerClient {
     // 修改全局env
     this.setEnv("LZY_PM2_RUNNING", "true")
     this.setEnv("LZY_PM2_PID", deamonPID)
+
+
+    // 进行ws链接
+    await this.IPCClient.connect()
     //
-    this.IPCClient.connect()
+
     //
     console.log(`Deamon Running PID:${deamonPID}`);
-
   }
 
   // 杀死守护进程
