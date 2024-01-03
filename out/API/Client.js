@@ -13,6 +13,9 @@ class ProgressManagerClient {
         this.IPCClient = new SocketIPC_1.SocketIPCClient();
         this.launchDaemon();
     }
+    execute(command) {
+        this.IPCClient.connect();
+    }
     // 启动一个PM2客户端作为守护进程
     launchDaemon() {
         if (this._checkDaemon())
@@ -22,7 +25,9 @@ class ProgressManagerClient {
         this.setEnv("LZY_PM2_RUNNING", "true");
         this.setEnv("LZY_PM2_PID", deamonPID);
         //
-        console.log(`Deamon Running PID:${deamonPID}, WS:7888`);
+        console.log(`Deamon Running PID:${deamonPID}`);
+        //
+        this.execute("prepare");
     }
     // 杀死守护进程
     killDaemon() {
@@ -50,9 +55,9 @@ class ProgressManagerClient {
         });
         //TODO 守护进程的输出到专门的日志文件
         // 处理子进程的输出信息
-        // deamon_process.stdout.on('data', (data: any) => {
-        //   console.log(data.toString());
-        // });
+        deamon_process.stdout.on('data', (data) => {
+            console.log(data.toString());
+        });
         // 处理子进程的错误信息
         // deamon_process.stderr.on('data', (err: any) => {
         //   console.error(err.toString());
