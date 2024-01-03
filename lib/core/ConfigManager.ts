@@ -6,6 +6,7 @@ export interface AppConfig {
   script: string
   scriptFullPath: string
   options: Record<string, boolean>
+  pid?: number
 }
 
 
@@ -24,11 +25,12 @@ export default class ConfigManager {
       .sort((a, b) => a.id - b.id)
   }
   // 创建一个新Config
-  create(): AppConfig {
+  create(name?: string): AppConfig {
+
     let appConfig: any = {};
 
     appConfig.id = 1
-    appConfig.name = "default"
+    appConfig.name = name || "default"
     appConfig.cwd = process.cwd()
     appConfig.script = ""
     appConfig.options = {}

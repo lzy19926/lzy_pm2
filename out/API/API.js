@@ -1,12 +1,5 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = __importDefault(require("path"));
-const God_1 = __importDefault(require("../core/God"));
-const Client_1 = __importDefault(require("../core/Client"));
-const terminal_table_1 = require("../common/terminal-table");
 // 判断是否是启动配置文件
 function isConfigFile(cmd) {
     return false;
@@ -38,10 +31,10 @@ function parseCommand(cmd) {
     return { scriptPath, options };
 }
 class API {
+    // private client = new ProgressManagerClient() // 客户端
+    // private configManager = this.client.configManager // 配置中心
     constructor() {
         this.cwd = process.cwd(); // 当前终端目录
-        this.client = new Client_1.default(); // 客户端
-        this.configManager = this.client.configManager; // 配置中心
     }
     start(cmd) {
         if (isConfigFile(cmd)) {
@@ -59,24 +52,24 @@ class API {
         // 解析cmd
         const { scriptPath, options } = parseCommand(cmd);
         // 异步执行
-        startNewProcessPath();
+        // startNewProcessPath()
         // 执行回调
         cb();
         // 通过path启动一个新的进程
-        function startNewProcessPath() {
-            const appConfig = that.configManager.create();
-            appConfig.script = scriptPath;
-            appConfig.options = options;
-            appConfig.scriptFullPath = path_1.default.resolve(appConfig.cwd, appConfig.script);
-            new God_1.default().forkMode(appConfig);
-        }
+        // function startNewProcessPath() {
+        //   const appConfig = that.configManager.create()
+        //   appConfig.script = scriptPath
+        //   appConfig.options = options
+        //   appConfig.scriptFullPath = path.resolve(appConfig.cwd, appConfig.script)
+        //   new God().forkMode(appConfig)
+        // }
         // 通过path重启一个进程
         function restartExistingProcessPath() {
         }
     }
     _showTerminalList() {
-        const procs = this.configManager.getAll();
-        (0, terminal_table_1.showTerminalList)(procs);
+        // const procs = this.configManager.getAll()
+        // showTerminalList(procs)
     }
 }
 exports.default = API;

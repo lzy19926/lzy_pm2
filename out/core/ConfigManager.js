@@ -13,10 +13,10 @@ class ConfigManager {
             .sort((a, b) => a.id - b.id);
     }
     // 创建一个新Config
-    create() {
+    create(name) {
         let appConfig = {};
         appConfig.id = 1;
-        appConfig.name = "default";
+        appConfig.name = name || "default";
         appConfig.cwd = process.cwd();
         appConfig.script = "";
         appConfig.options = {};

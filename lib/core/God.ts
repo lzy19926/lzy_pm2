@@ -1,5 +1,7 @@
-import fs from 'fs'
+
 import path from 'path'
+import ConfigManager from '../core/ConfigManager'
+import { SocketIPCServer } from '../common/SocketIPC'
 import type { AppConfig } from "./ConfigManager"
 
 
@@ -8,11 +10,17 @@ import type { AppConfig } from "./ConfigManager"
 // God与Client的通信由socket进行
 export default class God {
 
-  private _env: any
-  private _envFilePath: string = ""
+
+  public IPCServer = new SocketIPCServer() // ws通信模块
+  public configManager = new ConfigManager() // 配置中心
+
   constructor() { }
 
-  prepare() { }
+  // 首次运行Deamon    // 构建配置
+  prepare(pid: number) {
+    const appConfig = this.configManager.create("Deamon")
+    appConfig.pid = pid
+  }
 
   executeApp() { }
 
@@ -66,23 +74,19 @@ export default class God {
     throw new Error(e)
   }
 
-  // PM2全局环境变量修改
-  initEnv() {
-    this._envFilePath = path.resolve(__dirname, "../env.json")
-    this._env = JSON.parse(fs.readFileSync(this._envFilePath, 'utf-8'))
-    return this._env
-  }
 
-  setEnv(key: string, value: string) {
-    this._env[key] = value
-    const content = JSON.stringify(this._env)
-    fs.writeFileSync(this._envFilePath, content, 'utf-8')
-  }
-
-  getEnv(key: string) {
-    if (!this._env) {
-      this.initEnv()
-    }
-    return this._env[key]
-  }
 }
+
+
+
+
+
+// ----------------------running------------------------
+(() => {
+  const god = new God()
+  god.prepare(0)
+
+  setInterval(() => {
+    console.log("-----Deamon Running-----");
+  }, 1000 * 10)
+})()

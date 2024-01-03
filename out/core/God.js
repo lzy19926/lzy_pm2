@@ -3,15 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
+const ConfigManager_1 = __importDefault(require("../core/ConfigManager"));
+const SocketIPC_1 = require("../common/SocketIPC");
 // 用于pm2实际操作的核心模块,由client进行调用
 // God与Client的通信由socket进行
 class God {
     constructor() {
-        this._envFilePath = "";
+        this.IPCServer = new SocketIPC_1.SocketIPCServer(); // ws通信模块
+        this.configManager = new ConfigManager_1.default(); // 配置中心
     }
-    prepare() { }
+    // 首次运行Deamon    // 构建配置
+    prepare(pid) {
+        const appConfig = this.configManager.create("Deamon");
+        appConfig.pid = pid;
+    }
     executeApp() { }
     // 进行通知
     notify() { }
@@ -50,22 +55,13 @@ class God {
     logAndGenerateError(e) {
         throw new Error(e);
     }
-    // PM2全局环境变量修改
-    initEnv() {
-        this._envFilePath = path_1.default.resolve(__dirname, "../env.json");
-        this._env = JSON.parse(fs_1.default.readFileSync(this._envFilePath, 'utf-8'));
-        return this._env;
-    }
-    setEnv(key, value) {
-        this._env[key] = value;
-        const content = JSON.stringify(this._env);
-        fs_1.default.writeFileSync(this._envFilePath, content, 'utf-8');
-    }
-    getEnv(key) {
-        if (!this._env) {
-            this.initEnv();
-        }
-        return this._env[key];
-    }
 }
 exports.default = God;
+// ----------------------running------------------------
+(() => {
+    const god = new God();
+    god.prepare(0);
+    setInterval(() => {
+        console.log("-----Deamon Running-----");
+    }, 1000 * 10);
+})();

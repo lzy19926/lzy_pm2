@@ -1,8 +1,6 @@
 import path from 'path'
-import God from '../core/God'
-import ProgressManagerClient from '../core/Client'
 import { showTerminalList } from '../common/terminal-table'
-import { SocketIPCClient } from '../common/SocketIPC'
+
 
 // 判断是否是启动配置文件
 function isConfigFile(cmd: string): boolean {
@@ -36,10 +34,12 @@ function parseCommand(cmd: string) {
 export default class API {
 
   private cwd = process.cwd(); // 当前终端目录
-  private client = new ProgressManagerClient() // 客户端
-  private configManager = this.client.configManager // 配置中心
+
+  // private client = new ProgressManagerClient() // 客户端
+  // private configManager = this.client.configManager // 配置中心
 
   constructor() { }
+
 
 
   start(cmd: string) {
@@ -61,21 +61,21 @@ export default class API {
     const { scriptPath, options } = parseCommand(cmd)
 
     // 异步执行
-    startNewProcessPath()
+    // startNewProcessPath()
 
     // 执行回调
     cb()
 
     // 通过path启动一个新的进程
-    function startNewProcessPath() {
+    // function startNewProcessPath() {
 
-      const appConfig = that.configManager.create()
-      appConfig.script = scriptPath
-      appConfig.options = options
-      appConfig.scriptFullPath = path.resolve(appConfig.cwd, appConfig.script)
+    //   const appConfig = that.configManager.create()
+    //   appConfig.script = scriptPath
+    //   appConfig.options = options
+    //   appConfig.scriptFullPath = path.resolve(appConfig.cwd, appConfig.script)
 
-      new God().forkMode(appConfig)
-    }
+    //   new God().forkMode(appConfig)
+    // }
     // 通过path重启一个进程
     function restartExistingProcessPath() {
 
@@ -84,8 +84,8 @@ export default class API {
   }
 
   _showTerminalList() {
-    const procs = this.configManager.getAll()
-    showTerminalList(procs)
+    // const procs = this.configManager.getAll()
+    // showTerminalList(procs)
   }
 
 }
