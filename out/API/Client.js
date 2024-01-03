@@ -75,11 +75,11 @@ class ProgressManagerClient {
             return false;
         }
     }
-    pingDaemon() { }
-    getAllProcess() { }
-    getProcessByNameOrId() { }
-    startWatch() { }
-    boardCase() { }
+    //TODO pingDaemon() { }
+    //TODO getAllProcess() { }
+    //TODO getProcessByNameOrId() { }
+    //TODO startWatch() { }
+    //TODO boardCase() { }
     // PM2全局环境变量修改
     initEnv() {
         this._envFilePath = path_1.default.resolve(__dirname, "../../env.json");

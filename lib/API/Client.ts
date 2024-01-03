@@ -9,6 +9,7 @@ export default class ProgressManagerClient {
   private _env: any
   private _envFilePath: string = ""
   private IPCClient = new SocketIPCClient()
+
   constructor() {
     this.launchDaemon()
   }
@@ -43,7 +44,7 @@ export default class ProgressManagerClient {
   }
 
   // 创建守护进程
-  _createDaemon() {
+  private _createDaemon() {
     const scriptPath = path.resolve(__dirname, "../core/god")
 
     let deamon_process = require('child_process').spawn("node", [scriptPath], {
@@ -74,7 +75,7 @@ export default class ProgressManagerClient {
   }
 
   // 检查是否已经运行Deamon
-  _checkDaemon(): boolean {
+  private _checkDaemon(): boolean {
     const isPM2Running = this.getEnv("LZY_PM2_RUNNING")
     const pid = this.getEnv("LZY_PM2_PID")
 
@@ -86,22 +87,18 @@ export default class ProgressManagerClient {
     }
   }
 
+  //TODO pingDaemon() { }
 
+  //TODO getAllProcess() { }
 
-  pingDaemon() { }
+  //TODO getProcessByNameOrId() { }
 
-  getAllProcess() { }
+  //TODO startWatch() { }
 
-  getProcessByNameOrId() { }
-
-  startWatch() { }
-
-  boardCase() { }
-
-
+  //TODO boardCase() { }
 
   // PM2全局环境变量修改
-  initEnv() {
+  private initEnv() {
     this._envFilePath = path.resolve(__dirname, "../../env.json")
     this._env = JSON.parse(fs.readFileSync(this._envFilePath, 'utf-8'))
     return this._env

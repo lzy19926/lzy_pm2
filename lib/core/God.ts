@@ -9,8 +9,6 @@ import type { AppConfig } from "./ConfigManager"
 // 用于pm2实际操作的核心模块,由client进行调用
 // God与Client的通信由socket进行
 export default class God {
-
-
   public IPCServer = new SocketIPCServer() // ws通信模块
   public configManager = new ConfigManager() // 配置中心
 

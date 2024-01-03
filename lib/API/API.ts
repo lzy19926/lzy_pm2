@@ -38,8 +38,6 @@ export default class API {
 
   constructor() { }
 
-
-
   start(cmd: string) {
     if (isConfigFile(cmd)) {
       this._startConfigJson(cmd, () => this._showTerminalList())
@@ -48,11 +46,17 @@ export default class API {
     }
   }
 
-  _startConfigJson(cmd: string, cb: Function) {
+  delete() { }
+
+  deleteAll() {
+    this.client.killDaemon()
+  }
+
+  private _startConfigJson(cmd: string, cb: Function) {
     //todo
   }
 
-  _startScript(cmd: string, cb: Function) {
+  private _startScript(cmd: string, cb: Function) {
     const that = this
 
     // 解析cmd
@@ -81,14 +85,8 @@ export default class API {
 
   }
 
-  _showTerminalList() {
+  private _showTerminalList() {
     // const procs = this.configManager.getAll()
     // showTerminalList(procs)
-  }
-
-
-
-  deleteAll() {
-    this.client.killDaemon()
   }
 }

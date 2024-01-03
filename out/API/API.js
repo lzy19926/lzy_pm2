@@ -47,6 +47,10 @@ class API {
             this._startScript(cmd, () => this._showTerminalList());
         }
     }
+    delete() { }
+    deleteAll() {
+        this.client.killDaemon();
+    }
     _startConfigJson(cmd, cb) {
         //todo
     }
@@ -73,9 +77,6 @@ class API {
     _showTerminalList() {
         // const procs = this.configManager.getAll()
         // showTerminalList(procs)
-    }
-    deleteAll() {
-        this.client.killDaemon();
     }
 }
 exports.default = API;
