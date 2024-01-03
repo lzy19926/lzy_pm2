@@ -1,6 +1,6 @@
 import path from 'path'
 import { showTerminalList } from '../common/terminal-table'
-
+import ProgressManagerClient from './Client'
 
 // 判断是否是启动配置文件
 function isConfigFile(cmd: string): boolean {
@@ -34,9 +34,7 @@ function parseCommand(cmd: string) {
 export default class API {
 
   private cwd = process.cwd(); // 当前终端目录
-
-  // private client = new ProgressManagerClient() // 客户端
-  // private configManager = this.client.configManager // 配置中心
+  public client = new ProgressManagerClient() // PM2客户端
 
   constructor() { }
 
@@ -88,4 +86,9 @@ export default class API {
     // showTerminalList(procs)
   }
 
+
+
+  deleteAll() {
+    this.client.killDaemon()
+  }
 }

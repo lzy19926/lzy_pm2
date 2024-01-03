@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const Client_1 = __importDefault(require("./Client"));
 // 判断是否是启动配置文件
 function isConfigFile(cmd) {
     return false;
@@ -31,10 +35,9 @@ function parseCommand(cmd) {
     return { scriptPath, options };
 }
 class API {
-    // private client = new ProgressManagerClient() // 客户端
-    // private configManager = this.client.configManager // 配置中心
     constructor() {
         this.cwd = process.cwd(); // 当前终端目录
+        this.client = new Client_1.default(); // PM2客户端
     }
     start(cmd) {
         if (isConfigFile(cmd)) {
@@ -70,6 +73,9 @@ class API {
     _showTerminalList() {
         // const procs = this.configManager.getAll()
         // showTerminalList(procs)
+    }
+    deleteAll() {
+        this.client.killDaemon();
     }
 }
 exports.default = API;

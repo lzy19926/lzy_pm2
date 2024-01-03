@@ -9,7 +9,9 @@ export default class ProgressManagerClient {
   private _env: any
   private _envFilePath: string = ""
   private IPCClient = new SocketIPCClient()
-  constructor() { }
+  constructor() {
+    this.launchDaemon()
+  }
 
 
   // 启动一个PM2客户端作为守护进程
@@ -25,6 +27,21 @@ export default class ProgressManagerClient {
     console.log(`Deamon Running PID:${deamonPID}, WS:7888`);
   }
 
+  // 杀死守护进程
+  killDaemon() {
+    const pid = this.getEnv("LZY_PM2_PID")
+    try {
+      process.kill(pid, 'SIGTERM');
+      this.setEnv("LZY_PM2_RUNNING", "false")
+      this.setEnv("LZY_PM2_PID", "")
+
+      console.log(`Deamon killed SUCCESS PID:${pid}`);
+    } catch (e) {
+      console.log(`Deamon killed FAILED PID:${pid}`);
+      console.error(e)
+    }
+  }
+
   // 创建守护进程
   _createDaemon() {
     const scriptPath = path.resolve(__dirname, "../core/god")
@@ -34,9 +51,10 @@ export default class ProgressManagerClient {
       cwd: process.cwd(),
       windowsHide: true,
       env: Object.assign({}, process.env),
-      stdio: ['ignore', 'ignore', 'ignore'] // 忽略输入输出流
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
     });
 
+    //TODO 守护进程的输出到专门的日志文件
     // 处理子进程的输出信息
     // deamon_process.stdout.on('data', (data: any) => {
     //   console.log(data.toString());
@@ -51,7 +69,6 @@ export default class ProgressManagerClient {
     // deamon_process.on('message', (msg: any) => {
     //   console.log(`Received message from other process : ${msg}`);
     // });
-
 
     return deamon_process
   }
@@ -69,20 +86,7 @@ export default class ProgressManagerClient {
     }
   }
 
-  // 杀死守护进程
-  killDaemon() {
-    const pid = this.getEnv("LZY_PM2_PID")
-    try {
-      process.kill(pid, 'SIGTERM');
-      this.setEnv("LZY_PM2_RUNNING", "false")
-      this.setEnv("LZY_PM2_PID", "")
 
-      console.log(`Deamon killed SUCCESS PID:${pid}`);
-    } catch (e) {
-      console.log(`Deamon killed FAILED PID:${pid}`);
-      console.error(e)
-    }
-  }
 
   pingDaemon() { }
 
