@@ -1,7 +1,8 @@
-const path = require("path")
-const god = require('./God')
-const { showTerminalList } = require('./terminal-table')
-import { configManager } from './ConfigManager'
+import path from 'path'
+import God from './God'
+import ProgressManagerClient from './Client'
+import { showTerminalList } from './terminal-table'
+import ConfigManager from './ConfigManager'
 import type { AppConfig } from "./ConfigManager"
 
 // 判断是否是启动配置文件
@@ -12,7 +13,7 @@ function isConfigFile(cmd: string): boolean {
 // 初步解析cmd  处理 <-->相关配置
 function parseCommand(cmd: string) {
   const optionList = cmd.split("--").map(o => o.trim()) || []
-  const scriptPath = optionList.shift()
+  const scriptPath = optionList.shift() || ""
   const options = {}
 
   optionList.forEach(option => {
@@ -35,20 +36,27 @@ function parseCommand(cmd: string) {
 
 export default class API {
 
-  private cwd: string = process.cwd(); // 当前终端目录
+  private cwd = process.cwd(); // 当前终端目录
+  private client = new ProgressManagerClient() // 客户端
+  private configManager = this.client.configManager // 配置中心
+
   constructor() { }
+
 
   start(cmd: string) {
     if (isConfigFile(cmd)) {
-      this._startConfigJson(cmd, () => showTerminalList())
+      this._startConfigJson(cmd, () => this._showTerminalList())
     } else {
-      this._startScript(cmd, () => showTerminalList())
+      this._startScript(cmd, () => this._showTerminalList())
     }
   }
 
-  _startConfigJson(cmd: string, cb: Function) { }
+  _startConfigJson(cmd: string, cb: Function) {
+    //todo
+  }
 
   _startScript(cmd: string, cb: Function) {
+    const that = this
 
     // 解析cmd
     const { scriptPath, options } = parseCommand(cmd)
@@ -62,18 +70,23 @@ export default class API {
     // 通过path启动一个新的进程
     function startNewProcessPath() {
 
-      const appConfig = configManager.create()
+      const appConfig = that.configManager.create()
       appConfig.script = scriptPath
       appConfig.options = options
       appConfig.scriptFullPath = path.resolve(appConfig.cwd, appConfig.script)
 
-      god.forkMode(appConfig)
+      new God().forkMode(appConfig)
     }
     // 通过path重启一个进程
     function restartExistingProcessPath() {
 
     }
 
+  }
+
+  _showTerminalList() {
+    const procs = this.configManager.getAll()
+    showTerminalList(procs)
   }
 
 }

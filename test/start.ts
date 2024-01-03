@@ -1,6 +1,5 @@
-
-const API = require("../lib/API")
-const path = require("path")
+import API from "../lib/API"
+import path from "path"
 
 
 

@@ -1,33 +1,38 @@
 
 export interface AppConfig {
-  id?: number
-  name?: string
-  cwd?: string
-  script?: string
-  scriptFullPath?: string
-  options?: Record<string, boolean>
+  id: number
+  name: string
+  cwd: string
+  script: string
+  scriptFullPath: string
+  options: Record<string, boolean>
 }
 
 
-
-
-
-
-class ConfigManager {
+export default class ConfigManager {
 
   private _map = new Map<number, AppConfig>()
   private _count = 0
   constructor() { }
 
-  get() { }
+  get(idOrName: number | string) { }
 
+  // 获取全部config并排序
+  getAll(): AppConfig[] {
+    return Array
+      .from(this._map.values())
+      .sort((a, b) => a.id - b.id)
+  }
   // 创建一个新Config
-  create() {
-    let appConfig: AppConfig = {};
+  create(): AppConfig {
+    let appConfig: any = {};
 
     appConfig.id = 1
     appConfig.name = "default"
     appConfig.cwd = process.cwd()
+    appConfig.script = ""
+    appConfig.options = {}
+    appConfig.scriptFullPath = ""
 
     this._map.set(this._count, appConfig)
     this._count++
@@ -40,5 +45,3 @@ class ConfigManager {
     return appConfig
   }
 }
-
-export const configManager = new ConfigManager()

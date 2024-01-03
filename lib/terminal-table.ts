@@ -1,4 +1,5 @@
-var Table = require('cli-tableau');
+const Table = require("cli-tableau")
+import type { AppConfig } from "./ConfigManager"
 
 const extension = 2
 const HEAD_WIDTH_MAP = {
@@ -15,22 +16,28 @@ const HEAD_WIDTH_MAP = {
 }
 
 
-function showTerminalList(list: any[]) {
+function formatConfig(configs: AppConfig[]) {
+  return configs.map(c => {
+    return [c.id, c.name, "", "", "", ""]
+  })
+}
+
+export function showTerminalList(configs: AppConfig[]) {
   var table = new Table({
     head: Object.keys(HEAD_WIDTH_MAP),
     colWidths: Object.values(HEAD_WIDTH_MAP).map(w => w + extension),
     borders: true
   });
 
-  table.push(["", "", "", "", "", ""])
-  console.log(`
-  =======================================================================================================================
-    阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器
-  =======================================================================================================================
-  `);
+  table.push(...formatConfig(configs))
 
+  const title =
+    `
+=======================================================================================================================
+  阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器          阳九的PM2管理器
+=======================================================================================================================
+`
+
+  console.log(title);
   console.log(table.toString());
 }
-
-
-module.exports = { showTerminalList }
