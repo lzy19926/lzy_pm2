@@ -2,24 +2,20 @@ import type { AppConfig } from "./ConfigManager"
 
 
 
-// 用于pm2实际操作的类,由client进行调用
+// 用于pm2实际操作的核心模块,由client进行调用
 // God与Client的通信由socket进行
-class God {
+export default class God {
   constructor() { }
 
   prepare() { }
 
-
   executeApp() { }
-
 
   // 进行通知
   notify() { }
 
-
   // forkMode创建进程
   forkMode(pm2_env: AppConfig) {
-
     let spawn = require('child_process').spawn;
 
     let command = "node" || ""
@@ -65,6 +61,3 @@ class God {
     throw new Error(e)
   }
 }
-
-
-module.exports = new God()
