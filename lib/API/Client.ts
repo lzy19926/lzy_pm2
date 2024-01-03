@@ -1,22 +1,21 @@
 import path from 'path'
 import fs from 'fs'
 import { SocketIPCClient } from '../common/SocketIPC'
-
+import type { IPCMessage } from '../common/SocketIPC'
 
 
 // PM2调用客户端
 export default class ProgressManagerClient {
   private _env: any
   private _envFilePath: string = ""
-  private IPCClient = new SocketIPCClient()
+  private IPCClient = new SocketIPCClient(this)
 
   constructor() {
     this.launchDaemon()
   }
 
-
   execute(command: string) {
-    this.IPCClient.connect()
+
   }
 
   // 启动一个PM2客户端作为守护进程
@@ -29,10 +28,10 @@ export default class ProgressManagerClient {
     this.setEnv("LZY_PM2_RUNNING", "true")
     this.setEnv("LZY_PM2_PID", deamonPID)
     //
+    this.IPCClient.connect()
+    //
     console.log(`Deamon Running PID:${deamonPID}`);
 
-    //
-    this.execute("prepare")
   }
 
   // 杀死守护进程

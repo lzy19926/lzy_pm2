@@ -10,11 +10,10 @@ const SocketIPC_1 = require("../common/SocketIPC");
 class ProgressManagerClient {
     constructor() {
         this._envFilePath = "";
-        this.IPCClient = new SocketIPC_1.SocketIPCClient();
+        this.IPCClient = new SocketIPC_1.SocketIPCClient(this);
         this.launchDaemon();
     }
     execute(command) {
-        this.IPCClient.connect();
     }
     // 启动一个PM2客户端作为守护进程
     launchDaemon() {
@@ -25,9 +24,9 @@ class ProgressManagerClient {
         this.setEnv("LZY_PM2_RUNNING", "true");
         this.setEnv("LZY_PM2_PID", deamonPID);
         //
-        console.log(`Deamon Running PID:${deamonPID}`);
+        this.IPCClient.connect();
         //
-        this.execute("prepare");
+        console.log(`Deamon Running PID:${deamonPID}`);
     }
     // 杀死守护进程
     killDaemon() {

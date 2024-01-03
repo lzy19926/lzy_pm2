@@ -9,7 +9,7 @@ import type { AppConfig } from "./ConfigManager"
 // 用于pm2实际操作的核心模块,由client进行调用
 // God与Client的通信由socket进行
 export default class God {
-  public IPCServer = new SocketIPCServer() // ws通信模块
+  public IPCServer = new SocketIPCServer(this) // ws通信模块
   public configManager = new ConfigManager() // 配置中心
 
   constructor() { }
@@ -20,7 +20,8 @@ export default class God {
     appConfig.pid = pid
   }
 
-  executeApp() { }
+  // 执行client传来的action
+  execute() { }
 
   // 进行通知
   notify() { }
@@ -82,7 +83,6 @@ export default class God {
 // ----------------------running------------------------
 (() => {
   const god = new God()
-  god.prepare(0)
 
   setInterval(() => {
     console.log("-----Deamon Running-----");

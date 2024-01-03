@@ -9,7 +9,7 @@ const SocketIPC_1 = require("../common/SocketIPC");
 // God与Client的通信由socket进行
 class God {
     constructor() {
-        this.IPCServer = new SocketIPC_1.SocketIPCServer(); // ws通信模块
+        this.IPCServer = new SocketIPC_1.SocketIPCServer(this); // ws通信模块
         this.configManager = new ConfigManager_1.default(); // 配置中心
     }
     // 首次运行Deamon    // 构建配置
@@ -17,7 +17,8 @@ class God {
         const appConfig = this.configManager.create("Deamon");
         appConfig.pid = pid;
     }
-    executeApp() { }
+    // 执行client传来的action
+    execute() { }
     // 进行通知
     notify() { }
     // forkMode创建进程
@@ -60,7 +61,6 @@ exports.default = God;
 // ----------------------running------------------------
 (() => {
     const god = new God();
-    god.prepare(0);
     setInterval(() => {
         console.log("-----Deamon Running-----");
     }, 1000 * 10);

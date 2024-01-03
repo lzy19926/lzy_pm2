@@ -1,22 +1,40 @@
 import { WebSocketServer } from 'ws';
 import WebSocket from 'ws';
+import God from '../core/God';
+import ProgressManagerClient from '../API/Client';
+
 // 守护进程通信模块, 用于API调用
 export class SocketIPCServer {
   private _wss?: WebSocketServer
-  constructor() {
+  private god: God
+
+  constructor(god: God) {
+    this.god = god
     this.connect()
   }
 
   connect() {
-
+    const that = this
     const wss = new WebSocketServer({ port: 7888 });
     this._wss = wss
 
     wss.on('connection', function connection(ws) {
+
+
       ws.on('error', console.error);
 
+
+      // 尝试将所有消息解析为action
       ws.on('message', function message(data) {
-        console.log('Deamon received: %s', data);
+        try {
+          const action = JSON.parse(data.toString())
+          if (action.action) {
+            that.god.execute(action)
+          }
+        } catch (e) {
+          console.log('Deamon received: %s', data);
+        }
+
       });
 
       ws.send('Deamon Connected Success');
@@ -27,11 +45,16 @@ export class SocketIPCServer {
   }
 }
 
-
+// 客户端用的通信模块
 export class SocketIPCClient {
 
   private _ws?: WebSocket
   private _retry: number = 0
+  private _client: ProgressManagerClient
+
+  constructor(client: ProgressManagerClient) {
+    this._client = client
+  }
 
   connect() {
     const that = this
@@ -46,9 +69,12 @@ export class SocketIPCClient {
       }
     });
 
-    // 首次链接发送消息
+    // 首次链接发送消息,执行prepare
     ws.on('open', function open() {
-      ws.send('Client Connected Success');
+      const message: IPCMessage = { type: "message", message: "Client Connected Success" }
+      that.sendServer(message)
+      const action: IPCMessage = { type: "action", action: "prepare", args: ['11001'] }
+      that.sendServer(action)
     });
 
     // 接受消息
@@ -57,7 +83,16 @@ export class SocketIPCClient {
     });
   }
 
-  sendServer(data: string) {
-    this._ws?.send(data)
+  // 发送一个Message给服务端
+  sendServer(message: IPCMessage) {
+    this._ws?.send(JSON.stringify(message))
   }
+}
+
+// 用于Server与Client传递的消息对象
+export interface IPCMessage {
+  type: "message" | "action"
+  message?: string
+  action?: string
+  args?: any[]
 }
