@@ -13,9 +13,11 @@
   "author": "lzy19926",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.10.6"
+    "@types/node": "^20.10.6",
+    "@types/ws": "^8.5.10"
   },
   "dependencies": {
-    "cli-tableau": "^2.0.0"
+    "cli-tableau": "^2.0.0",
+    "ws": "^8.16.0"
   }
 }

@@ -1,9 +1,8 @@
 import path from 'path'
-import God from './God'
-import ProgressManagerClient from './Client'
-import { showTerminalList } from './terminal-table'
-import ConfigManager from './ConfigManager'
-import type { AppConfig } from "./ConfigManager"
+import God from '../core/God'
+import ProgressManagerClient from '../core/Client'
+import { showTerminalList } from '../common/terminal-table'
+import { SocketIPCClient } from '../common/SocketIPC'
 
 // 判断是否是启动配置文件
 function isConfigFile(cmd: string): boolean {

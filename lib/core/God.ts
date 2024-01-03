@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import type { AppConfig } from "./ConfigManager"
 
 
@@ -5,6 +7,9 @@ import type { AppConfig } from "./ConfigManager"
 // 用于pm2实际操作的核心模块,由client进行调用
 // God与Client的通信由socket进行
 export default class God {
+
+  private _env: any
+  private _envFilePath: string = ""
   constructor() { }
 
   prepare() { }
@@ -59,5 +64,25 @@ export default class God {
   // 错误上报
   logAndGenerateError(e: any) {
     throw new Error(e)
+  }
+
+  // PM2全局环境变量修改
+  initEnv() {
+    this._envFilePath = path.resolve(__dirname, "../env.json")
+    this._env = JSON.parse(fs.readFileSync(this._envFilePath, 'utf-8'))
+    return this._env
+  }
+
+  setEnv(key: string, value: string) {
+    this._env[key] = value
+    const content = JSON.stringify(this._env)
+    fs.writeFileSync(this._envFilePath, content, 'utf-8')
+  }
+
+  getEnv(key: string) {
+    if (!this._env) {
+      this.initEnv()
+    }
+    return this._env[key]
   }
 }
