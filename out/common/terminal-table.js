@@ -1,4 +1,8 @@
 "use strict";
+/******************************************
+ * 终端列表显示组件
+ *  @author lzy19926
+*******************************************/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showTerminalList = void 0;
 const Table = require("cli-tableau");

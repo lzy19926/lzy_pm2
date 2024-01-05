@@ -1,3 +1,8 @@
+/******************************************
+ * 终端列表显示组件
+ *  @author lzy19926
+*******************************************/
+
 const Table = require("cli-tableau")
 import type { AppConfig } from "../Deamon/ClusterDB"
 
