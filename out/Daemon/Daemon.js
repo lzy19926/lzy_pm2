@@ -15,11 +15,11 @@ class Daemon {
     }
     start() {
         this.god.clusterDB.create("Daemon");
+        setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1);
     }
 }
 // 运行Daemon
 if (require.main === module) {
     var daemon = new Daemon();
     daemon.start();
-    setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1);
 }

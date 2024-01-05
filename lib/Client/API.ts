@@ -4,9 +4,6 @@
  *  @author lzy19926
 *******************************************/
 
-
-import path from 'path'
-import { showTerminalList } from '../common/terminal-table'
 import ProgressManagerClient from './Client'
 import { parseCommand, isConfigFile } from './Utils'
 
@@ -29,7 +26,6 @@ export default class API {
   delete() { }
 
   deleteAll() { }
-
 
   async list() {
     this.client.showProgressList()

@@ -13,11 +13,10 @@ class Daemon {
 
   constructor() { }
 
-
   start() {
     this.god.clusterDB.create("Daemon")
+    setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1)
   }
-
 
 }
 
@@ -29,6 +28,4 @@ if (require.main === module) {
   var daemon = new Daemon();
 
   daemon.start();
-
-  setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1)
 }

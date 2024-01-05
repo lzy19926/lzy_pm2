@@ -22,7 +22,6 @@ export default class God {
   constructor() { }
 
 
-
   // 进行通知
   notify() { }
 

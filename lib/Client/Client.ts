@@ -113,6 +113,4 @@ export default class ProgressManagerClient {
   //TODO startWatch() { }
 
   //TODO boardCase() { }
-
-
 }
