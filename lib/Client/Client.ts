@@ -12,13 +12,11 @@ import { showTerminalList } from '../common/terminal-table'
 // PM2调用客户端
 export default class ProgressManagerClient {
 
-  public RPCClient = new RPCClient()
+  public RPCClient = new RPCClient(4000)
   private envManager = new GlobalEnv()
   private logManager = new LogManager()
 
-  constructor() {
-    this.RPCClient.connect(4000)
-  }
+  constructor() { }
 
   // 执行远程命令,通过RPC直接调用Daemon方法
   async executeRemote(command: string, args?: any[]) {
@@ -37,12 +35,12 @@ export default class ProgressManagerClient {
 
     console.log(`Daemon Running PID:${daemon.pid}`);
 
-    const list = await this.executeRemote("getMonitorData")
-    showTerminalList(list)
+    // 显示list
+    this.showProgressList()
   }
 
   // 杀死守护进程
-  killDaemon() {
+  async killDaemon() {
     const pid = this.envManager.getEnv("LZY_PM2_PID")
 
     try {
@@ -54,6 +52,12 @@ export default class ProgressManagerClient {
     } catch (e) {
       console.error(`Daemon killed FAILED PID:${pid}`, e);
     }
+  }
+
+  // 显示所有进程列表
+  async showProgressList() {
+    const list = await this.executeRemote("getMonitorData")
+    showTerminalList(list)
   }
 
   // 创建守护进程

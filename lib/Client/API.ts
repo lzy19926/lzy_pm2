@@ -32,8 +32,7 @@ export default class API {
 
 
   async list() {
-    const list = await this.client.executeRemote("getMonitorData")
-    showTerminalList(list)
+    this.client.showProgressList()
   }
 
   private _startConfigJson(cmd: string, cb: Function) { }

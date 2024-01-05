@@ -28,6 +28,9 @@ exports.RPCClient = exports.RPCServer = void 0;
 const rpc = require('pm2-axon-rpc');
 const axon = require('pm2-axon');
 class RPCServer {
+    constructor(port) {
+        this.listen(port);
+    }
     listen(port) {
         const rep = axon.socket('rep');
         this._server = new rpc.Server(rep);
@@ -51,6 +54,9 @@ class RPCServer {
 }
 exports.RPCServer = RPCServer;
 class RPCClient {
+    constructor(port) {
+        this.connect(port);
+    }
     connect(port) {
         const req = axon.socket('req');
         this._client = new rpc.Client(req);

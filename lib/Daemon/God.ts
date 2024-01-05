@@ -12,33 +12,16 @@ import { RPCServer } from '../common/RPC'
 
 export default class God {
 
+  public RPCServer = new RPCServer(4000)
   private actions = new ActionMethods(this)
   public clusterDB = new ClusterDB(this)
   private forker = new Forker(this)
   private watcher = new ClusterWatcher(this)
-  private RPCServer = new RPCServer()
-
-  constructor() {
-    this.exposeAPI()
-  }
-
-  // 暴露ActionMethods上所有公共方法
-  exposeAPI() {
-    this.RPCServer.listen(4000)
-    const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this.actions));
-
-    for (const name of methodNames) {
-      if (name == "constructor") continue
-      if (name[0] == "_") continue
-      //@ts-ignore
-
-      const fn = this.actions[name].bind(this.actions)
 
 
-      this.RPCServer.expose("getMonitorData", fn)
-      console.log("暴露方法", name);
-    }
-  }
+  constructor() { }
+
+
 
   // 进行通知
   notify() { }

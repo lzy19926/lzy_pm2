@@ -17,7 +17,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const terminal_table_1 = require("../common/terminal-table");
 const Client_1 = __importDefault(require("./Client"));
 const Utils_1 = require("./Utils");
 // 对外暴露的用户API
@@ -38,8 +37,7 @@ class API {
     deleteAll() { }
     list() {
         return __awaiter(this, void 0, void 0, function* () {
-            const list = yield this.client.executeRemote("getMonitorData");
-            (0, terminal_table_1.showTerminalList)(list);
+            this.client.showProgressList();
         });
     }
     _startConfigJson(cmd, cb) { }

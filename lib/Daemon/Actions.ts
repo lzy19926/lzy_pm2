@@ -8,8 +8,23 @@ import type God from "./God"
 
 
 export default class ActionMethods {
-  constructor(private god: God) { }
+  constructor(private god: God) {
+    this._exposeAPI()
+  }
 
+
+  // 暴露ActionMethods上所有公共方法
+  _exposeAPI() {
+    const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+    const exposeMethods = methodNames
+      .filter(name => name != "constructor" && name[0] != "_")
+      .map(name => {
+        this.god.RPCServer.expose(name, ((this as any)[name]).bind(this))
+        return name
+      })
+
+    console.log("暴露方法", exposeMethods);
+  }
 
   // 获取所有process数据
   getMonitorData() {

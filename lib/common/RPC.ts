@@ -32,6 +32,10 @@ export class RPCServer {
 
   private _server: any
 
+  constructor(port: number) {
+    this.listen(port)
+  }
+
   listen(port: number) {
     const rep = axon.socket('rep');
     this._server = new rpc.Server(rep);
@@ -62,6 +66,9 @@ export class RPCClient {
 
   private _client: any
 
+  constructor(port: number) {
+    this.connect(port)
+  }
 
   connect(port: number) {
     const req = axon.socket('req');

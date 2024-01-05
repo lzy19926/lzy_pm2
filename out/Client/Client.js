@@ -25,10 +25,9 @@ const terminal_table_1 = require("../common/terminal-table");
 // PM2调用客户端
 class ProgressManagerClient {
     constructor() {
-        this.RPCClient = new RPC_1.RPCClient();
+        this.RPCClient = new RPC_1.RPCClient(4000);
         this.envManager = new Utils_1.GlobalEnv();
         this.logManager = new LogManager_1.default();
-        this.RPCClient.connect(4000);
     }
     // 执行远程命令,通过RPC直接调用Daemon方法
     executeRemote(command, args) {
@@ -46,22 +45,31 @@ class ProgressManagerClient {
             this.envManager.setEnv("LZY_PM2_RUNNING", "true");
             this.envManager.setEnv("LZY_PM2_PID", daemon.pid);
             console.log(`Daemon Running PID:${daemon.pid}`);
-            const list = yield this.executeRemote("getMonitorData");
-            (0, terminal_table_1.showTerminalList)(list);
+            // 显示list
+            this.showProgressList();
         });
     }
     // 杀死守护进程
     killDaemon() {
-        const pid = this.envManager.getEnv("LZY_PM2_PID");
-        try {
-            process.kill(pid, 'SIGTERM');
-            this.envManager.setEnv("LZY_PM2_RUNNING", "false");
-            this.envManager.setEnv("LZY_PM2_PID", "");
-            console.log(`Daemon killed SUCCESS PID:${pid}`);
-        }
-        catch (e) {
-            console.error(`Daemon killed FAILED PID:${pid}`, e);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const pid = this.envManager.getEnv("LZY_PM2_PID");
+            try {
+                process.kill(pid, 'SIGTERM');
+                this.envManager.setEnv("LZY_PM2_RUNNING", "false");
+                this.envManager.setEnv("LZY_PM2_PID", "");
+                console.log(`Daemon killed SUCCESS PID:${pid}`);
+            }
+            catch (e) {
+                console.error(`Daemon killed FAILED PID:${pid}`, e);
+            }
+        });
+    }
+    // 显示所有进程列表
+    showProgressList() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const list = yield this.executeRemote("getMonitorData");
+            (0, terminal_table_1.showTerminalList)(list);
+        });
     }
     // 创建守护进程
     _spawnDaemon() {
