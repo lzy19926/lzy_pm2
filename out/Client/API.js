@@ -1,4 +1,9 @@
 "use strict";
+/******************************************
+ * LzyPM2对外暴露的API,用户直接调用
+ * 与Client组合
+ *  @author lzy19926
+*******************************************/
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

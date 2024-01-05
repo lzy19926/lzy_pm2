@@ -1,4 +1,8 @@
 "use strict";
+/******************************************
+ * Client侧使用的工具集
+ *  @author lzy19926
+*******************************************/
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

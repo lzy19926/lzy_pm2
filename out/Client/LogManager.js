@@ -1,6 +1,9 @@
 "use strict";
+/******************************************
+ * TODO日志管理模块
+ *  @author lzy19926
+*******************************************/
 Object.defineProperty(exports, "__esModule", { value: true });
-// 日志管理模块
 class LogManager {
 }
 exports.default = LogManager;

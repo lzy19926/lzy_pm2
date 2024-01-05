@@ -1,3 +1,8 @@
+/******************************************
+ * LzyPM2客户端入口
+ *  @author lzy19926
+*******************************************/
+
 import path from 'path'
 import fs from 'fs'
 import { RPCClient } from '../common/RPC'

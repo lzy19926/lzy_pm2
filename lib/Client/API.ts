@@ -1,3 +1,10 @@
+/******************************************
+ * LzyPM2对外暴露的API,用户直接调用
+ * 与Client组合
+ *  @author lzy19926
+*******************************************/
+
+
 import path from 'path'
 import { showTerminalList } from '../common/terminal-table'
 import ProgressManagerClient from './Client'
