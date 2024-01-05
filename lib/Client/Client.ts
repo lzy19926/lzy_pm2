@@ -8,6 +8,8 @@ import fs from 'fs'
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from './Utils'
 import LogManager from './LogManager'
+import { spawn } from 'node:child_process'
+import { ChildProcess } from 'child_process'
 // PM2调用客户端
 export default class ProgressManagerClient {
 
@@ -20,23 +22,23 @@ export default class ProgressManagerClient {
   // 执行远程命令,通过RPC直接调用Daemon方法
   executeRemote(command: string) { }
 
-  // 启动一个PM2客户端作为守护进程
-  async launchDaemon() {
+  // 启动守护进程
+  launchDaemon() {
     if (this._checkDaemon()) return
 
-    const daemonPID = this._createDaemon().pid
+    const daemon = this._spawnDaemon()
 
     // 修改全局env
     this.envManager.setEnv("LZY_PM2_RUNNING", "true")
-    this.envManager.setEnv("LZY_PM2_PID", daemonPID)
+    this.envManager.setEnv("LZY_PM2_PID", daemon.pid)
 
-
-    console.log(`Daemon Running PID:${daemonPID}`);
+    console.log(`Daemon Running PID:${daemon.pid}`);
   }
 
   // 杀死守护进程
   killDaemon() {
     const pid = this.envManager.getEnv("LZY_PM2_PID")
+
     try {
       process.kill(pid, 'SIGTERM');
       this.envManager.setEnv("LZY_PM2_RUNNING", "false")
@@ -49,10 +51,10 @@ export default class ProgressManagerClient {
   }
 
   // 创建守护进程
-  private _createDaemon() {
+  private _spawnDaemon() {
     const DaemonJS = path.resolve(__dirname, "../Daemon/Daemon.js")
 
-    let daemon_process = require('child_process').spawn("node", [DaemonJS], {
+    let daemon_process = spawn("node", [DaemonJS], {
       detached: true,
       cwd: process.cwd(),
       windowsHide: true,
@@ -62,7 +64,7 @@ export default class ProgressManagerClient {
 
     //TODO 守护进程的输出到专门的日志文件
     // 处理子进程的输出信息
-    daemon_process.stdout.on('data', (data: any) => {
+    daemon_process.stdout?.on('data', (data: any) => {
       console.log(data.toString());
     });
 
@@ -85,7 +87,7 @@ export default class ProgressManagerClient {
     const pid = this.envManager.getEnv("LZY_PM2_PID")
 
     if (isPM2Running == "true") {
-      console.log(`LZY_PM2 Already Running: PID:${pid},WS:7888`);
+      console.log(`LZY_PM2 Already Running: PID:${pid}`);
       return true
     } else {
       return false
