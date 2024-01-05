@@ -1,3 +1,10 @@
+/******************************************
+ * 用于存储所有子进程数据的数据库模块
+ * 通过子类组合到God中
+ *  @author lzy19926
+*******************************************/
+
+import type God from "./God"
 
 export interface AppConfig {
   id: number
@@ -9,12 +16,11 @@ export interface AppConfig {
   pid?: number
 }
 
-
-export default class ConfigManager {
+export default class ClusterDB {
 
   private _map = new Map<number, AppConfig>()
   private _count = 0
-  constructor() { }
+  constructor(private god: God) { }
 
   get(idOrName: number | string) { }
 

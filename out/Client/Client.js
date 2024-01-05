@@ -13,51 +13,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
-const SocketIPC_1 = require("../common/SocketIPC");
+const RPC_1 = require("../common/RPC");
+const Utils_1 = require("./Utils");
+const LogManager_1 = __importDefault(require("./LogManager"));
 // PM2调用客户端
 class ProgressManagerClient {
     constructor() {
-        this._envFilePath = "";
-        this.IPCClient = new SocketIPC_1.SocketIPCClient(this);
-        this.launchDaemon();
+        this.RPCClient = new RPC_1.RPCClient();
+        this.envManager = new Utils_1.GlobalEnv();
+        this.logManager = new LogManager_1.default();
     }
-    execute(command) {
-    }
+    // 执行远程命令,通过RPC直接调用Daemon方法
+    executeRemote(command) { }
     // 启动一个PM2客户端作为守护进程
     launchDaemon() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._checkDaemon())
                 return;
-            const deamonPID = this._createDaemon().pid;
+            const daemonPID = this._createDaemon().pid;
             // 修改全局env
-            this.setEnv("LZY_PM2_RUNNING", "true");
-            this.setEnv("LZY_PM2_PID", deamonPID);
-            // 进行ws链接
-            yield this.IPCClient.connect();
-            //
-            //
-            console.log(`Deamon Running PID:${deamonPID}`);
+            this.envManager.setEnv("LZY_PM2_RUNNING", "true");
+            this.envManager.setEnv("LZY_PM2_PID", daemonPID);
+            console.log(`Daemon Running PID:${daemonPID}`);
         });
     }
     // 杀死守护进程
     killDaemon() {
-        const pid = this.getEnv("LZY_PM2_PID");
+        const pid = this.envManager.getEnv("LZY_PM2_PID");
         try {
             process.kill(pid, 'SIGTERM');
-            this.setEnv("LZY_PM2_RUNNING", "false");
-            this.setEnv("LZY_PM2_PID", "");
-            console.log(`Deamon killed SUCCESS PID:${pid}`);
+            this.envManager.setEnv("LZY_PM2_RUNNING", "false");
+            this.envManager.setEnv("LZY_PM2_PID", "");
+            console.log(`Daemon killed SUCCESS PID:${pid}`);
         }
         catch (e) {
-            console.log(`Deamon killed FAILED PID:${pid}`);
-            console.error(e);
+            console.error(`Daemon killed FAILED PID:${pid}`, e);
         }
     }
     // 创建守护进程
     _createDaemon() {
-        const scriptPath = path_1.default.resolve(__dirname, "../core/god");
-        let deamon_process = require('child_process').spawn("node", [scriptPath], {
+        const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
+        let daemon_process = require('child_process').spawn("node", [DaemonJS], {
             detached: true,
             cwd: process.cwd(),
             windowsHide: true,
@@ -66,23 +62,23 @@ class ProgressManagerClient {
         });
         //TODO 守护进程的输出到专门的日志文件
         // 处理子进程的输出信息
-        deamon_process.stdout.on('data', (data) => {
+        daemon_process.stdout.on('data', (data) => {
             console.log(data.toString());
         });
         // 处理子进程的错误信息
-        // deamon_process.stderr.on('data', (err: any) => {
+        // daemon_process.stderr.on('data', (err: any) => {
         //   console.error(err.toString());
         // });
         // 处理子进程的接受数据
-        // deamon_process.on('message', (msg: any) => {
+        // daemon_process.on('message', (msg: any) => {
         //   console.log(`Received message from other process : ${msg}`);
         // });
-        return deamon_process;
+        return daemon_process;
     }
-    // 检查是否已经运行Deamon
+    // 检查是否已经运行Daemon
     _checkDaemon() {
-        const isPM2Running = this.getEnv("LZY_PM2_RUNNING");
-        const pid = this.getEnv("LZY_PM2_PID");
+        const isPM2Running = this.envManager.getEnv("LZY_PM2_RUNNING");
+        const pid = this.envManager.getEnv("LZY_PM2_PID");
         if (isPM2Running == "true") {
             console.log(`LZY_PM2 Already Running: PID:${pid},WS:7888`);
             return true;
@@ -90,28 +86,6 @@ class ProgressManagerClient {
         else {
             return false;
         }
-    }
-    //TODO pingDaemon() { }
-    //TODO getAllProcess() { }
-    //TODO getProcessByNameOrId() { }
-    //TODO startWatch() { }
-    //TODO boardCase() { }
-    // PM2全局环境变量修改
-    initEnv() {
-        this._envFilePath = path_1.default.resolve(__dirname, "../../env.json");
-        this._env = JSON.parse(fs_1.default.readFileSync(this._envFilePath, 'utf-8'));
-        return this._env;
-    }
-    setEnv(key, value) {
-        this._env[key] = value;
-        const content = JSON.stringify(this._env);
-        fs_1.default.writeFileSync(this._envFilePath, content, 'utf-8');
-    }
-    getEnv(key) {
-        if (!this._env) {
-            this.initEnv();
-        }
-        return this._env[key];
     }
 }
 exports.default = ProgressManagerClient;

@@ -1,9 +1,10 @@
 import { WebSocketServer } from 'ws';
 import WebSocket from 'ws';
-import God from '../core/God';
-import ProgressManagerClient from '../API/Client';
+import God from '../Deamon/God';
+import ProgressManagerClient from '../Client/Client';
 
-// 守护进程通信模块, 用于API调用
+// 基于WebSocket的守护进程通信模块, 用于API调用
+//TODO PM2应使用rpc技术进行远程调用  而不是ws
 export class SocketIPCServer {
   private _wss?: WebSocketServer
   private _ws?: WebSocket //TODO 后续可能会房间化

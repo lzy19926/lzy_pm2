@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "cli-tableau": "^2.0.0",
+    "pm2-axon": "^4.0.1",
+    "pm2-axon-rpc": "^0.7.1",
+    "ts-mixer": "^6.0.3",
     "ws": "^8.16.0"
   }
 }

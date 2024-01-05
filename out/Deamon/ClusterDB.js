@@ -1,7 +1,13 @@
 "use strict";
+/******************************************
+ * 用于存储所有子进程数据的数据库模块
+ * 通过子类组合到God中
+ *  @author lzy19926
+*******************************************/
 Object.defineProperty(exports, "__esModule", { value: true });
-class ConfigManager {
-    constructor() {
+class ClusterDB {
+    constructor(god) {
+        this.god = god;
         this._map = new Map();
         this._count = 0;
     }
@@ -30,4 +36,4 @@ class ConfigManager {
         return appConfig;
     }
 }
-exports.default = ConfigManager;
+exports.default = ClusterDB;

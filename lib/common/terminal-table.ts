@@ -1,5 +1,5 @@
 const Table = require("cli-tableau")
-import type { AppConfig } from "../core/ConfigManager"
+import type { AppConfig } from "../Deamon/ClusterDB"
 
 const extension = 2
 const HEAD_WIDTH_MAP = {
