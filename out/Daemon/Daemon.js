@@ -9,11 +9,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const God_1 = __importDefault(require("./God"));
-const RPC_1 = require("../common/RPC");
 class Daemon {
     constructor() {
         this.god = new God_1.default();
-        this.RPCServer = new RPC_1.RPCServer();
     }
     start() {
         this.god.clusterDB.create("Daemon");

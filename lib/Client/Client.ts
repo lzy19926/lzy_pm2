@@ -4,26 +4,29 @@
 *******************************************/
 
 import path from 'path'
-import fs from 'fs'
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from './Utils'
 import LogManager from './LogManager'
 import { spawn } from 'node:child_process'
-import { ChildProcess } from 'child_process'
+import { showTerminalList } from '../common/terminal-table'
 // PM2调用客户端
 export default class ProgressManagerClient {
 
-  private RPCClient = new RPCClient()
+  public RPCClient = new RPCClient()
   private envManager = new GlobalEnv()
   private logManager = new LogManager()
 
-  constructor() { }
+  constructor() {
+    this.RPCClient.connect(4000)
+  }
 
   // 执行远程命令,通过RPC直接调用Daemon方法
-  executeRemote(command: string) { }
+  async executeRemote(command: string, args?: any[]) {
+    return this.RPCClient.call(command, args)
+  }
 
   // 启动守护进程
-  launchDaemon() {
+  async launchDaemon() {
     if (this._checkDaemon()) return
 
     const daemon = this._spawnDaemon()
@@ -33,6 +36,9 @@ export default class ProgressManagerClient {
     this.envManager.setEnv("LZY_PM2_PID", daemon.pid)
 
     console.log(`Daemon Running PID:${daemon.pid}`);
+
+    const list = await this.executeRemote("getMonitorData")
+    showTerminalList(list)
   }
 
   // 杀死守护进程

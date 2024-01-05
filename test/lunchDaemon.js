@@ -1,11 +1,11 @@
 
 const ProgressManagerClient = require('../out/Client/Client').default
-debugger
+
 const client = new ProgressManagerClient()
 
 client.launchDaemon()
 
-
+const protoPropertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(client));
 
 setTimeout(() => {
   client.killDaemon()

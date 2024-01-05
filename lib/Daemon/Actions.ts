@@ -6,10 +6,13 @@
 
 import type God from "./God"
 
+
 export default class ActionMethods {
   constructor(private god: God) { }
 
 
   // 获取所有process数据
-  getMonitorData() {  }
+  getMonitorData() {
+    return this.god.clusterDB.getAll()
+  }
 }

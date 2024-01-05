@@ -32,5 +32,5 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     const client = new RPCClient();
     client.connect(4000);
     const res = yield client.call("add", [1, 2]);
-    console.log(res);
+    console.log(res); // =>3
 }))();

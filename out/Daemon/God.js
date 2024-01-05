@@ -11,15 +11,31 @@ const Actions_1 = __importDefault(require("./Actions"));
 const Watcher_1 = __importDefault(require("./Watcher"));
 const Forker_1 = __importDefault(require("./Forker"));
 const ClusterDB_1 = __importDefault(require("./ClusterDB"));
+const RPC_1 = require("../common/RPC");
 class God {
     constructor() {
         this.actions = new Actions_1.default(this);
         this.clusterDB = new ClusterDB_1.default(this);
         this.forker = new Forker_1.default(this);
         this.watcher = new Watcher_1.default(this);
+        this.RPCServer = new RPC_1.RPCServer();
+        this.exposeAPI();
     }
-    // 执行client传来的action
-    execute() { }
+    // 暴露ActionMethods上所有公共方法
+    exposeAPI() {
+        this.RPCServer.listen(4000);
+        const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this.actions));
+        for (const name of methodNames) {
+            if (name == "constructor")
+                continue;
+            if (name[0] == "_")
+                continue;
+            //@ts-ignore
+            const fn = this.actions[name].bind(this.actions);
+            this.RPCServer.expose("getMonitorData", fn);
+            console.log("暴露方法", name);
+        }
+    }
     // 进行通知
     notify() { }
     // 错误上报

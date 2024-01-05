@@ -35,6 +35,6 @@
   client.connect(4000)
 
   const res = await client.call("add", [1, 2])
-  console.log(res);
+  console.log(res);// =>3
 
 })()

@@ -10,6 +10,8 @@ class ActionMethods {
         this.god = god;
     }
     // 获取所有process数据
-    getMonitorData() { }
+    getMonitorData() {
+        return this.god.clusterDB.getAll();
+    }
 }
 exports.default = ActionMethods;

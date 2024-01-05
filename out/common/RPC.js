@@ -12,14 +12,14 @@
     function add(a: number, b: number) {
       return a + b
     }
-    server.expose(add)
+    server.expose("newAdd",add)
  *
  *
  *  -----------EXAMPLE-client---------------
  *   const client = new RPCClient()
      client.connect(4000)
 
-     const res = await client.call("add", [1, 2])
+     const res = await client.call("newAdd", [1, 2])
      console.log(res);// =>3
  *
 *******************************************/
@@ -34,9 +34,9 @@ class RPCServer {
         rep.bind(port);
         console.log("RPCServer Ready");
     }
-    // 将一个函数暴露出去(注意:需要绑定this)
-    expose(originFn) {
-        this._server.expose(originFn.name, function () {
+    // 将一个函数暴露出去,并重命名(注意:需要绑定this后函数名会改变 add => bound add)
+    expose(name, originFn) {
+        this._server.expose(name, function () {
             const args = Array.from(arguments);
             const cb = args.pop();
             try {
@@ -58,7 +58,7 @@ class RPCClient {
         console.log("RPCClient Ready");
     }
     // promisify过的rpc.call方法
-    call(method, args) {
+    call(method, args = []) {
         const that = this;
         return new Promise((resolve, reject) => {
             that._client.call(method, ...args, function (err, result) {

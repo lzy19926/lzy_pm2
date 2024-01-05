@@ -30,6 +30,12 @@ export default class API {
 
   deleteAll() { }
 
+
+  async list() {
+    const list = await this.client.executeRemote("getMonitorData")
+    showTerminalList(list)
+  }
+
   private _startConfigJson(cmd: string, cb: Function) { }
 
   private _startScript(cmd: string, cb: Function) {

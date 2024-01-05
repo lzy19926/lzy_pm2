@@ -7,6 +7,7 @@ import ActionMethods from './Actions'
 import ClusterWatcher from './Watcher'
 import Forker from './Forker'
 import ClusterDB from './ClusterDB'
+import { RPCServer } from '../common/RPC'
 
 
 export default class God {
@@ -15,11 +16,29 @@ export default class God {
   public clusterDB = new ClusterDB(this)
   private forker = new Forker(this)
   private watcher = new ClusterWatcher(this)
+  private RPCServer = new RPCServer()
 
-  constructor() { }
+  constructor() {
+    this.exposeAPI()
+  }
 
-  // 执行client传来的action
-  execute() { }
+  // 暴露ActionMethods上所有公共方法
+  exposeAPI() {
+    this.RPCServer.listen(4000)
+    const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this.actions));
+
+    for (const name of methodNames) {
+      if (name == "constructor") continue
+      if (name[0] == "_") continue
+      //@ts-ignore
+
+      const fn = this.actions[name].bind(this.actions)
+
+
+      this.RPCServer.expose("getMonitorData", fn)
+      console.log("暴露方法", name);
+    }
+  }
 
   // 进行通知
   notify() { }

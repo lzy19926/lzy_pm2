@@ -6,12 +6,10 @@
 
 
 import God from './God'
-import { RPCServer } from '../common/RPC'
-import { showTerminalList } from '../common/terminal-table'
+
 
 class Daemon {
   private god = new God()
-  private RPCServer = new RPCServer()
 
   constructor() { }
 
@@ -19,6 +17,8 @@ class Daemon {
   start() {
     this.god.clusterDB.create("Daemon")
   }
+
+
 }
 
 
