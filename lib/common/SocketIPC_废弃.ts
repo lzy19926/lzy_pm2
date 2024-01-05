@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws';
 import WebSocket from 'ws';
-import God from '../Deamon/God';
+import God from '../Daemon/God';
 import ProgressManagerClient from '../Client/Client';
 
 // 基于WebSocket的守护进程通信模块, 用于API调用
@@ -43,7 +43,7 @@ export class SocketIPCServer {
         console.log('Deamon received message: %s', message.message);
       }
       else if (message.type == "action") {
-        this.god.execute(message)
+        this.god.execute()
       }
     } catch (e) {
       console.log('Deamon received Unknow message: %s', data);
