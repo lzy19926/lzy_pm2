@@ -47,13 +47,13 @@ export class GlobalEnv {
   }
 
   private initEnv() {
-    this._envFilePath = path.resolve(__dirname, "../../env.json")
+    this._envFilePath = path.resolve(__dirname, "../../cache/env.json")
     this._env = JSON.parse(fs.readFileSync(this._envFilePath, 'utf-8'))
     return this._env
   }
 
-  setEnv(key: string, value: string) {
-    this._env[key] = value
+  setEnv(key: string, value: any) {
+    this._env[key] = value ? value : ""
     const content = JSON.stringify(this._env)
     fs.writeFileSync(this._envFilePath, content, 'utf-8')
   }

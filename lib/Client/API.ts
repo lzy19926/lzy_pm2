@@ -33,8 +33,6 @@ export default class API {
   private _startConfigJson(cmd: string, cb: Function) { }
 
   private _startScript(cmd: string, cb: Function) {
-    const that = this
-
     const { scriptPath, options } = parseCommand(cmd)
 
     startNewProcessPath()
