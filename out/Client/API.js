@@ -28,7 +28,6 @@ class API {
     deleteAll() { }
     _startConfigJson(cmd, cb) { }
     _startScript(cmd, cb) {
-        const that = this;
         const { scriptPath, options } = (0, Utils_1.parseCommand)(cmd);
         startNewProcessPath();
         // 执行回调

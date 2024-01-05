@@ -7,7 +7,7 @@
 
 import God from './God'
 import { RPCServer } from '../common/RPC'
-
+import { showTerminalList } from '../common/terminal-table'
 
 class Daemon {
   private god = new God()
@@ -16,7 +16,9 @@ class Daemon {
   constructor() { }
 
 
-  start() { }
+  start() {
+    this.god.clusterDB.create("Daemon")
+  }
 }
 
 
@@ -27,4 +29,6 @@ if (require.main === module) {
   var daemon = new Daemon();
 
   daemon.start();
+
+  setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1)
 }

@@ -3,15 +3,6 @@
  * LzyPM2客户端入口
  *  @author lzy19926
 *******************************************/
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -20,6 +11,7 @@ const path_1 = __importDefault(require("path"));
 const RPC_1 = require("../common/RPC");
 const Utils_1 = require("./Utils");
 const LogManager_1 = __importDefault(require("./LogManager"));
+const node_child_process_1 = require("node:child_process");
 // PM2调用客户端
 class ProgressManagerClient {
     constructor() {
@@ -29,17 +21,15 @@ class ProgressManagerClient {
     }
     // 执行远程命令,通过RPC直接调用Daemon方法
     executeRemote(command) { }
-    // 启动一个PM2客户端作为守护进程
+    // 启动守护进程
     launchDaemon() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this._checkDaemon())
-                return;
-            const daemonPID = this._createDaemon().pid;
-            // 修改全局env
-            this.envManager.setEnv("LZY_PM2_RUNNING", "true");
-            this.envManager.setEnv("LZY_PM2_PID", daemonPID);
-            console.log(`Daemon Running PID:${daemonPID}`);
-        });
+        if (this._checkDaemon())
+            return;
+        const daemon = this._spawnDaemon();
+        // 修改全局env
+        this.envManager.setEnv("LZY_PM2_RUNNING", "true");
+        this.envManager.setEnv("LZY_PM2_PID", daemon.pid);
+        console.log(`Daemon Running PID:${daemon.pid}`);
     }
     // 杀死守护进程
     killDaemon() {
@@ -55,9 +45,10 @@ class ProgressManagerClient {
         }
     }
     // 创建守护进程
-    _createDaemon() {
+    _spawnDaemon() {
+        var _a;
         const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
-        let daemon_process = require('child_process').spawn("node", [DaemonJS], {
+        let daemon_process = (0, node_child_process_1.spawn)("node", [DaemonJS], {
             detached: true,
             cwd: process.cwd(),
             windowsHide: true,
@@ -66,7 +57,7 @@ class ProgressManagerClient {
         });
         //TODO 守护进程的输出到专门的日志文件
         // 处理子进程的输出信息
-        daemon_process.stdout.on('data', (data) => {
+        (_a = daemon_process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => {
             console.log(data.toString());
         });
         // 处理子进程的错误信息
@@ -84,7 +75,7 @@ class ProgressManagerClient {
         const isPM2Running = this.envManager.getEnv("LZY_PM2_RUNNING");
         const pid = this.envManager.getEnv("LZY_PM2_PID");
         if (isPM2Running == "true") {
-            console.log(`LZY_PM2 Already Running: PID:${pid},WS:7888`);
+            console.log(`LZY_PM2 Already Running: PID:${pid}`);
             return true;
         }
         else {

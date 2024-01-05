@@ -49,12 +49,12 @@ class GlobalEnv {
         this.initEnv();
     }
     initEnv() {
-        this._envFilePath = path_1.default.resolve(__dirname, "../../env.json");
+        this._envFilePath = path_1.default.resolve(__dirname, "../../cache/env.json");
         this._env = JSON.parse(fs_1.default.readFileSync(this._envFilePath, 'utf-8'));
         return this._env;
     }
     setEnv(key, value) {
-        this._env[key] = value;
+        this._env[key] = value ? value : "";
         const content = JSON.stringify(this._env);
         fs_1.default.writeFileSync(this._envFilePath, content, 'utf-8');
     }

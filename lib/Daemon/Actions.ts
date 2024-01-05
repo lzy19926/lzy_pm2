@@ -9,5 +9,7 @@ import type God from "./God"
 export default class ActionMethods {
   constructor(private god: God) { }
 
-  foo() { this.god.clusterDB.create()}
+
+  // 获取所有process数据
+  getMonitorData() {  }
 }

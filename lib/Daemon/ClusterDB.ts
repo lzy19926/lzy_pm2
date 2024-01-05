@@ -35,7 +35,7 @@ export default class ClusterDB {
 
     let appConfig: any = {};
 
-    appConfig.id = 1
+    appConfig.id = this._count
     appConfig.name = name || "default"
     appConfig.cwd = process.cwd()
     appConfig.script = ""
