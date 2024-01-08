@@ -16,7 +16,9 @@ export default class ProgressManagerClient {
   private envManager = new GlobalEnv()
   private logManager = new LogManager()
 
-  constructor() { }
+  constructor() {
+    this.launchDaemon()
+  }
 
   // 执行远程命令,通过RPC直接调用Daemon方法
   async executeRemote(command: string, args?: any[]) {

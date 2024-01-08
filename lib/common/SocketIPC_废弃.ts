@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { WebSocketServer } from 'ws';
 import WebSocket from 'ws';
 import God from '../Daemon/God';

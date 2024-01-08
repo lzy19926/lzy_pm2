@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketIPCClient = exports.SocketIPCServer = void 0;
+//@ts-nocheck
 const ws_1 = require("ws");
 const ws_2 = __importDefault(require("ws"));
 // 基于WebSocket的守护进程通信模块, 用于API调用

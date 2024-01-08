@@ -28,6 +28,7 @@ class ProgressManagerClient {
         this.RPCClient = new RPC_1.RPCClient(4000);
         this.envManager = new Utils_1.GlobalEnv();
         this.logManager = new LogManager_1.default();
+        this.launchDaemon();
     }
     // 执行远程命令,通过RPC直接调用Daemon方法
     executeRemote(command, args) {
