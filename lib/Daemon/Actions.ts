@@ -37,6 +37,7 @@ export default class ActionMethods {
 
     if (typeof child_process !== 'undefined') {
       newConfig.pid = child_process.pid as number
+      this.god.logManager.startLogging(child_process, newConfig)
     }
   }
 }
