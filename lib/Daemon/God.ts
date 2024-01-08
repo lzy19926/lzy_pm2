@@ -6,7 +6,7 @@
 import ActionMethods from './Actions'
 import ClusterWatcher from './Watcher'
 import Forker from './Forker'
-import ClusterDB from './ClusterDB'
+import ClusterDB from '../common/ClusterDB'
 import { RPCServer } from '../common/RPC'
 
 
@@ -15,7 +15,7 @@ export default class God {
   public RPCServer = new RPCServer(4000)
   private actions = new ActionMethods(this)
   public clusterDB = new ClusterDB(this)
-  private forker = new Forker(this)
+  public forker = new Forker(this)
   private watcher = new ClusterWatcher(this)
 
 

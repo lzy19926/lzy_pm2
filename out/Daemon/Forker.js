@@ -11,6 +11,7 @@ class Forker {
     }
     // forkMode创建进程
     forkMode(pm2_env) {
+        console.log(pm2_env);
         let spawn = require('child_process').spawn;
         let command = "node" || "";
         let spawnArgs = [pm2_env.scriptFullPath];

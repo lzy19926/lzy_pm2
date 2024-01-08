@@ -11,10 +11,9 @@ import { spawn } from 'node:child_process'
 import { showTerminalList } from '../common/terminal-table'
 
 //
-interface ClientConfig {
+export interface ClientConfig {
   showDaemonLog?: boolean
 }
-
 
 
 // PM2调用客户端
@@ -129,6 +128,8 @@ export default class ProgressManagerClient {
     this.config = defaultConfig
     return this.config
   }
+
+
 
   //TODO pingDaemon() { }
 

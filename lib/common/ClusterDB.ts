@@ -4,17 +4,20 @@
  *  @author lzy19926
 *******************************************/
 
-import type God from "./God"
+import type God from "../Daemon/God"
 
 export interface AppConfig {
   id: number
+  pid: number
   name: string
   cwd: string
   script: string
   scriptFullPath: string
   options: Record<string, boolean>
-  pid?: number
 }
+
+export type AppConfigTpl = Omit<Partial<AppConfig>, 'id' | 'pid'>
+
 
 export default class ClusterDB {
 
@@ -30,22 +33,27 @@ export default class ClusterDB {
       .from(this._map.values())
       .sort((a, b) => a.id - b.id)
   }
-  // 创建一个新Config
-  create(name?: string): AppConfig {
 
-    let appConfig: any = {};
-
-    appConfig.id = this._count
-    appConfig.name = name || "default"
-    appConfig.cwd = process.cwd()
-    appConfig.script = ""
-    appConfig.options = {}
-    appConfig.scriptFullPath = ""
-
-    this._map.set(this._count, appConfig)
+  // 储存一个config
+  set(config: AppConfig) {
+    this._map.set(this._count, config)
     this._count++
+  }
 
-    return appConfig
+  // 创建一个新Config
+  create(tpl: AppConfigTpl = {}): AppConfig {
+    let newConfig: AppConfig = {
+      id: this._count,
+      pid: -1,
+      name: tpl.name || "default",
+      cwd: tpl.cwd || process.cwd(),
+      script: tpl.script || "",
+      scriptFullPath: tpl.scriptFullPath || "",
+      options: tpl.options || {},
+    };
+
+    this.set(newConfig)
+    return newConfig
   }
 
   // 配置校验

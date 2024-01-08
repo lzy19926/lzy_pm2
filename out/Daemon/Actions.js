@@ -25,5 +25,10 @@ class ActionMethods {
     getMonitorData() {
         return this.god.clusterDB.getAll();
     }
+    // 创建子进程
+    forkModeCreateProcess(tpl) {
+        const newConfig = this.god.clusterDB.create(tpl);
+        this.god.forker.forkMode(newConfig);
+    }
 }
 exports.default = ActionMethods;

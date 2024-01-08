@@ -1,9 +1,4 @@
 "use strict";
-/******************************************
- * LzyPM2对外暴露的API,用户直接调用
- * 与Client组合
- *  @author lzy19926
-*******************************************/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -17,13 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/******************************************
+ * LzyPM2对外暴露的API,用户直接调用
+ * 与Client组合
+ *  @author lzy19926
+*******************************************/
+const path_1 = __importDefault(require("path"));
 const Client_1 = __importDefault(require("./Client"));
 const Utils_1 = require("./Utils");
 // 对外暴露的用户API
 class API {
-    constructor() {
+    constructor(config) {
+        this.config = config;
         this.cwd = process.cwd(); // 当前终端目录
-        this.client = new Client_1.default(); // PM2客户端
+        this.client = new Client_1.default(this.config); // PM2客户端
     }
     start(cmd) {
         if ((0, Utils_1.isConfigFile)(cmd)) {
@@ -42,12 +44,20 @@ class API {
     }
     _startConfigJson(cmd, cb) { }
     _startScript(cmd, cb) {
+        const that = this;
         const { scriptPath, options } = (0, Utils_1.parseCommand)(cmd);
         startNewProcessPath();
         // 执行回调
         cb();
         // 通过path启动一个新的进程
-        function startNewProcessPath() { }
+        function startNewProcessPath() {
+            const configTpl = {};
+            configTpl.cwd = that.cwd;
+            configTpl.script = scriptPath;
+            configTpl.options = options;
+            configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
+            that.client.executeRemote("forkModeCreateProcess", [configTpl]);
+        }
         // 通过path重启一个进程
         function restartExistingProcessPath() { }
     }

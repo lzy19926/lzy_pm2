@@ -5,7 +5,7 @@
 *******************************************/
 
 import type God from "./God"
-
+import type { AppConfigTpl } from '../common/ClusterDB'
 
 export default class ActionMethods {
   constructor(private god: God) {
@@ -29,5 +29,11 @@ export default class ActionMethods {
   // 获取所有process数据
   getMonitorData() {
     return this.god.clusterDB.getAll()
+  }
+
+  // 创建子进程
+  forkModeCreateProcess(tpl: AppConfigTpl) {
+    const newConfig = this.god.clusterDB.create(tpl)
+    this.god.forker.forkMode(newConfig)
   }
 }

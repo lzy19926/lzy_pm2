@@ -5,12 +5,15 @@
 *******************************************/
 
 import type God from "./God"
+import type { AppConfig } from '../common/ClusterDB'
 
 export default class Forker {
   constructor(private god: God) { }
 
   // forkMode创建进程
-  forkMode(pm2_env: any) {
+  forkMode(pm2_env: AppConfig) {
+    console.log(pm2_env);
+
     let spawn = require('child_process').spawn;
 
     let command = "node" || ""

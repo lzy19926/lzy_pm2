@@ -2,7 +2,7 @@ const PM2 = require('../out/Client/API').default
 const path = require('path')
 
 
-const api = new PM2()
+const api = new PM2({ showDaemonLog: true })
 const client = api.client
 
 

@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Actions_1 = __importDefault(require("./Actions"));
 const Watcher_1 = __importDefault(require("./Watcher"));
 const Forker_1 = __importDefault(require("./Forker"));
-const ClusterDB_1 = __importDefault(require("./ClusterDB"));
+const ClusterDB_1 = __importDefault(require("../common/ClusterDB"));
 const RPC_1 = require("../common/RPC");
 class God {
     constructor() {

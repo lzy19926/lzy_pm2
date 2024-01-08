@@ -3,17 +3,18 @@
  * 与Client组合
  *  @author lzy19926
 *******************************************/
-
+import path from 'path'
 import ProgressManagerClient from './Client'
 import { parseCommand, isConfigFile } from './Utils'
-
+import type { AppConfigTpl } from '../common/ClusterDB'
+import type { ClientConfig } from './Client'
 // 对外暴露的用户API
 export default class API {
 
   private cwd = process.cwd(); // 当前终端目录
-  public client = new ProgressManagerClient() // PM2客户端
+  public client = new ProgressManagerClient(this.config) // PM2客户端
 
-  constructor() { }
+  constructor(private config?: ClientConfig) { }
 
   start(cmd: string) {
     if (isConfigFile(cmd)) {
@@ -34,6 +35,7 @@ export default class API {
   private _startConfigJson(cmd: string, cb: Function) { }
 
   private _startScript(cmd: string, cb: Function) {
+    const that = this
     const { scriptPath, options } = parseCommand(cmd)
 
     startNewProcessPath()
@@ -42,7 +44,15 @@ export default class API {
     cb()
 
     // 通过path启动一个新的进程
-    function startNewProcessPath() { }
+    function startNewProcessPath() {
+      const configTpl: AppConfigTpl = {}
+      configTpl.cwd = that.cwd
+      configTpl.script = scriptPath
+      configTpl.options = options
+      configTpl.scriptFullPath = path.resolve(that.cwd, scriptPath)
+
+      that.client.executeRemote("forkModeCreateProcess", [configTpl])
+    }
     // 通过path重启一个进程
     function restartExistingProcessPath() { }
   }
