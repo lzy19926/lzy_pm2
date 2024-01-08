@@ -19,15 +19,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const RPC_1 = require("../common/RPC");
 const Utils_1 = require("./Utils");
-const LogManager_1 = __importDefault(require("./LogManager"));
 const node_child_process_1 = require("node:child_process");
-const terminal_table_1 = require("../common/terminal-table");
 // PM2调用客户端
 class ProgressManagerClient {
     constructor(config) {
         this.RPCClient = new RPC_1.RPCClient(4000);
         this.envManager = new Utils_1.GlobalEnv();
-        this.logManager = new LogManager_1.default();
         this.config = {};
         this._parseConfig(config);
         this.launchDaemon();
@@ -44,12 +41,9 @@ class ProgressManagerClient {
             if (this._checkDaemon())
                 return;
             const daemon = this._spawnDaemon();
-            // 修改全局env
             this.envManager.setEnv("LZY_PM2_RUNNING", "true");
             this.envManager.setEnv("LZY_PM2_PID", daemon.pid);
             console.log(`Daemon Running PID:${daemon.pid}`);
-            // 显示list
-            this.showProgressList();
         });
     }
     // 杀死守护进程
@@ -65,13 +59,6 @@ class ProgressManagerClient {
             catch (e) {
                 console.error(`Daemon killed FAILED PID:${pid}`, e);
             }
-        });
-    }
-    // 显示所有进程列表
-    showProgressList() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const list = yield this.executeRemote("getMonitorData");
-            (0, terminal_table_1.showTerminalList)(list);
         });
     }
     // 创建守护进程

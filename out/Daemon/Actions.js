@@ -31,6 +31,7 @@ class ActionMethods {
         const child_process = this.god.forker.forkMode(newConfig);
         if (typeof child_process !== 'undefined') {
             newConfig.pid = child_process.pid;
+            this.god.logManager.startLogging(child_process, newConfig);
         }
     }
 }

@@ -20,6 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const Client_1 = __importDefault(require("./Client"));
 const Utils_1 = require("./Utils");
+const terminal_table_1 = require("../common/terminal-table");
 // 对外暴露的用户API
 class API {
     constructor(config) {
@@ -29,17 +30,21 @@ class API {
     }
     start(cmd) {
         if ((0, Utils_1.isConfigFile)(cmd)) {
-            this._startConfigJson(cmd, () => this._showTerminalList());
+            this._startConfigJson(cmd, () => this.list());
         }
         else {
-            this._startScript(cmd, () => this._showTerminalList());
+            this._startScript(cmd, () => this.list());
         }
+    }
+    logs(idOrName) {
     }
     delete() { }
     deleteAll() { }
+    // 显示所有进程列表
     list() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.client.showProgressList();
+            const list = yield this.client.executeRemote("getMonitorData");
+            (0, terminal_table_1.showTerminalList)(list);
         });
     }
     _startConfigJson(cmd, cb) { }
@@ -58,12 +63,10 @@ class API {
                 configTpl.options = options;
                 configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
                 yield that.client.executeRemote("forkModeCreateProcess", [configTpl]);
-                that.list();
             });
         }
         // 通过path重启一个进程
         function restartExistingProcessPath() { }
     }
-    _showTerminalList() { }
 }
 exports.default = API;

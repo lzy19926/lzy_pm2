@@ -25,14 +25,6 @@ class Forker {
         try {
             console.log(`App [${pm2_env.name}:${pm2_env.id}] 由-Fork-模式启动`);
             var child_process = (0, node_child_process_1.spawn)(command, spawnArgs, spawnOptions);
-            // 处理子进程的输出信息
-            child_process.stdout.on('data', (data) => {
-                console.log(data.toString());
-            });
-            // 处理子进程的错误信息
-            child_process.stderr.on('data', (err) => {
-                console.error(err.toString());
-            });
             return child_process;
         }
         catch (e) {

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "cli-tableau": "^2.0.0",
+    "dayjs": "^1.11.10",
     "pm2-axon": "^4.0.1",
     "pm2-axon-rpc": "^0.7.1",
     "ts-mixer": "^6.0.3",
