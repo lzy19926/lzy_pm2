@@ -24,10 +24,12 @@ const node_child_process_1 = require("node:child_process");
 const terminal_table_1 = require("../common/terminal-table");
 // PM2调用客户端
 class ProgressManagerClient {
-    constructor() {
+    constructor(config) {
         this.RPCClient = new RPC_1.RPCClient(4000);
         this.envManager = new Utils_1.GlobalEnv();
         this.logManager = new LogManager_1.default();
+        this.config = {};
+        this._parseConfig(config);
         this.launchDaemon();
     }
     // 执行远程命令,通过RPC直接调用Daemon方法
@@ -109,6 +111,15 @@ class ProgressManagerClient {
         else {
             return false;
         }
+    }
+    // 解析config字段
+    _parseConfig(config) {
+        const defaultConfig = {};
+        if (typeof config !== "undefined") {
+            defaultConfig.showDaemonLog = config.showDaemonLog || false;
+        }
+        this.config = defaultConfig;
+        return this.config;
     }
 }
 exports.default = ProgressManagerClient;

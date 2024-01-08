@@ -9,14 +9,25 @@ import { GlobalEnv } from './Utils'
 import LogManager from './LogManager'
 import { spawn } from 'node:child_process'
 import { showTerminalList } from '../common/terminal-table'
+
+//
+interface ClientConfig {
+  showDaemonLog?: boolean
+}
+
+
+
 // PM2调用客户端
 export default class ProgressManagerClient {
 
   public RPCClient = new RPCClient(4000)
+
   private envManager = new GlobalEnv()
   private logManager = new LogManager()
+  private config: ClientConfig = {}
 
-  constructor() {
+  constructor(config?: ClientConfig) {
+    this._parseConfig(config)
     this.launchDaemon()
   }
 
@@ -104,6 +115,18 @@ export default class ProgressManagerClient {
     } else {
       return false
     }
+  }
+
+  // 解析config字段
+  private _parseConfig(config?: ClientConfig) {
+    const defaultConfig: ClientConfig = {}
+
+    if (typeof config !== "undefined") {
+      defaultConfig.showDaemonLog = config.showDaemonLog || false
+    }
+
+    this.config = defaultConfig
+    return this.config
   }
 
   //TODO pingDaemon() { }
