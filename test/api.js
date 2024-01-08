@@ -11,9 +11,7 @@ api.start(path.resolve(__dirname, './child_process.js'))
 
 
 // 打印日志
-setTimeout(() => {
-  api.logs(1)
-}, 1000 * 1)
+setTimeout(() => { }, 1000 * 1)
 
 
 // 关闭pm2

@@ -3,15 +3,21 @@
  *  @author lzy19926
 *******************************************/
 import fs from 'node:fs'
+import os from 'node:os'
+import readline from 'node:readline'
 import path from 'node:path'
 import dayjs from 'dayjs'
+import type { ChildProcess } from 'child_process'
 import type { AppConfig } from './ClusterDB'
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
+
+
+type Process = ChildProcess | ChildProcessWithoutNullStreams | NodeJS.Process
 
 export default class LogManager {
   constructor() { }
 
-  startLogging(child_process: ChildProcessWithoutNullStreams, config: AppConfig) {
+  startLogging(process: Process, config: AppConfig) {
     const that = this
     const logPath = path.resolve(__dirname, "../../cache", `${config.id}_logFile.json`)
     const writableStream = fs.createWriteStream(logPath, { flags: "a" });
@@ -20,45 +26,70 @@ export default class LogManager {
       error && console.error(`尝试添加新内容时发生错误： ${error}`);
     }
 
-
     config.logPath = logPath
 
-    // 处理子进程的输出信息
-    child_process.stdout.on('data', (data: any) => {
+    // 处理进程的输出信息
+    process.stdout?.on('data', (data: any) => {
       const contentJson = that._transformLogToJson(config, data, "LOG")
       writableStream.write(contentJson, onLogError)
     });
 
-    // 处理子进程的错误信息
-    child_process.stderr.on('data', (err: any) => {
+    // 处理进程的错误信息
+    process.stderr?.on('data', (err: any) => {
       const contentJson = that._transformLogToJson(config, err, "ERROR")
       writableStream.write(contentJson, onLogError)
     });
 
-    // 处理子进程的接受信息
-    child_process.stderr.on('message', (data: any) => {
+    // 处理进程的接受信息
+    process.stderr?.on('message', (data: any) => {
       const contentJson = that._transformLogToJson(config, data, "MESSAGE")
       writableStream.write(contentJson, onLogError)
     });
 
   }
 
-  //TODO 打印最后50行
+  //TODO 打印最后50行日志
   printLogs(config: AppConfig, lines: number = 50) {
-    console.log(config);
+    const that = this
+    const stream = fs.createReadStream(config.logPath, { encoding: 'utf8' });
+    const rl = readline.createInterface({ input: stream });
+
+    rl.on("line", line => {
+      console.log(that.__transformJsonToLine(line))
+    })
   }
 
   private _transformLogToJson(config: AppConfig, data: any, type: string) {
     return JSON.stringify({
-      message: data.toString(),
+      message: data.toString().replace(/\n/g, ''),
       type: type,
       timestamp: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       app_name: config.name
-    }) + '\n'
+    }) + os.EOL
   }
 
-  private __transformJsonToLine() {
+  private __transformJsonToLine(json: string) {
+    const { type, message, app_name, timestamp } = JSON.parse(json)
 
+    let COLORS = {
+      red: "\x1b[0m",
+      white: "\x1b[37m",
+      green: "\x1b[32m",
+      orange: "\x1b[33m"
+    }
+
+    let colorPrefix = COLORS.white
+    switch (type) {
+      case "LOG": colorPrefix = COLORS.white; break
+      case "WARN": colorPrefix = COLORS.orange; break
+      case "ERROR": colorPrefix = COLORS.red; break
+      default: colorPrefix = COLORS.white; break
+    }
+
+    const formatted =
+      `${colorPrefix} [${type}] [${app_name}] ${timestamp}\n` +
+      `${COLORS.white} ${message}`
+
+    return formatted
   }
-
 }
