@@ -51,12 +51,15 @@ class API {
         cb();
         // 通过path启动一个新的进程
         function startNewProcessPath() {
-            const configTpl = {};
-            configTpl.cwd = that.cwd;
-            configTpl.script = scriptPath;
-            configTpl.options = options;
-            configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
-            that.client.executeRemote("forkModeCreateProcess", [configTpl]);
+            return __awaiter(this, void 0, void 0, function* () {
+                const configTpl = {};
+                configTpl.cwd = that.cwd;
+                configTpl.script = scriptPath;
+                configTpl.options = options;
+                configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
+                yield that.client.executeRemote("forkModeCreateProcess", [configTpl]);
+                that.list();
+            });
         }
         // 通过path重启一个进程
         function restartExistingProcessPath() { }

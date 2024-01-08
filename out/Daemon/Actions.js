@@ -28,7 +28,10 @@ class ActionMethods {
     // 创建子进程
     forkModeCreateProcess(tpl) {
         const newConfig = this.god.clusterDB.create(tpl);
-        this.god.forker.forkMode(newConfig);
+        const child_process = this.god.forker.forkMode(newConfig);
+        if (typeof child_process !== 'undefined') {
+            newConfig.pid = child_process.pid;
+        }
     }
 }
 exports.default = ActionMethods;

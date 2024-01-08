@@ -44,14 +44,16 @@ export default class API {
     cb()
 
     // 通过path启动一个新的进程
-    function startNewProcessPath() {
+    async function startNewProcessPath() {
       const configTpl: AppConfigTpl = {}
       configTpl.cwd = that.cwd
       configTpl.script = scriptPath
       configTpl.options = options
       configTpl.scriptFullPath = path.resolve(that.cwd, scriptPath)
 
-      that.client.executeRemote("forkModeCreateProcess", [configTpl])
+      await that.client.executeRemote("forkModeCreateProcess", [configTpl])
+
+      that.list()
     }
     // 通过path重启一个进程
     function restartExistingProcessPath() { }

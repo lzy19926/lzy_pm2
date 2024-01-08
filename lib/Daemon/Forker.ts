@@ -6,21 +6,17 @@
 
 import type God from "./God"
 import type { AppConfig } from '../common/ClusterDB'
-
+import { spawn } from 'node:child_process'
 export default class Forker {
   constructor(private god: God) { }
 
   // forkMode创建进程
   forkMode(pm2_env: AppConfig) {
-    console.log(pm2_env);
-
-    let spawn = require('child_process').spawn;
-
     let command = "node" || ""
 
     let spawnArgs: string[] = [pm2_env.scriptFullPath as string]
 
-    let spawnOptions = {
+    let spawnOptions: any = {
       env: pm2_env,
       detached: true,
       cwd: pm2_env.cwd || process.cwd(),
@@ -34,21 +30,22 @@ export default class Forker {
 
       var child_process = spawn(command, spawnArgs, spawnOptions)
 
+      // 处理子进程的输出信息
+      child_process.stdout.on('data', (data: any) => {
+        console.log(data.toString());
+      });
+
+      // 处理子进程的错误信息
+      child_process.stderr.on('data', (err: any) => {
+        console.error(err.toString());
+      });
+
+
+      return child_process
+
     } catch (e) {
       this.god.logAndGenerateError(e)
     }
-
-
-    // 处理子进程的输出信息
-    child_process.stdout.on('data', (data: any) => {
-      console.log(data.toString());
-    });
-
-    // 处理子进程的错误信息
-    child_process.stderr.on('data', (err: any) => {
-      console.error(err.toString());
-    });
-
   }
 
   // clusterMode创建进程

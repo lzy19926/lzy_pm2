@@ -12,7 +12,6 @@ export default class ActionMethods {
     this._exposeAPI()
   }
 
-
   // 暴露ActionMethods上所有公共方法
   _exposeAPI() {
     const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
@@ -34,6 +33,10 @@ export default class ActionMethods {
   // 创建子进程
   forkModeCreateProcess(tpl: AppConfigTpl) {
     const newConfig = this.god.clusterDB.create(tpl)
-    this.god.forker.forkMode(newConfig)
+    const child_process = this.god.forker.forkMode(newConfig)
+
+    if (typeof child_process !== 'undefined') {
+      newConfig.pid = child_process.pid as number
+    }
   }
 }

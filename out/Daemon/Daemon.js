@@ -14,7 +14,8 @@ class Daemon {
         this.god = new God_1.default();
     }
     start() {
-        this.god.clusterDB.create({ name: "Daemon" });
+        const newConfig = this.god.clusterDB.create({ name: "Daemon" });
+        newConfig.pid = process.pid;
         setInterval(() => console.log("-----Daemon Running-----"), 1000 * 1);
     }
 }
