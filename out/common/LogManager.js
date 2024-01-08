@@ -19,6 +19,7 @@ class LogManager {
         const onLogError = (error) => {
             error && console.error(`尝试添加新内容时发生错误： ${error}`);
         };
+        config.logPath = logPath;
         // 处理子进程的输出信息
         child_process.stdout.on('data', (data) => {
             const contentJson = that._transformLogToJson(config, data, "LOG");
@@ -36,7 +37,8 @@ class LogManager {
         });
     }
     //TODO 打印最后50行
-    printLogs(id, lines = 50) {
+    printLogs(config, lines = 50) {
+        console.log(config);
     }
     _transformLogToJson(config, data, type) {
         return JSON.stringify({

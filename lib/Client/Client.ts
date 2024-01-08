@@ -7,7 +7,7 @@ import path from 'path'
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from './Utils'
 import { spawn } from 'node:child_process'
-
+import LogManager from '../common/LogManager'
 
 //
 export interface ClientConfig {
@@ -19,6 +19,7 @@ export interface ClientConfig {
 export default class ProgressManagerClient {
 
   public RPCClient = new RPCClient(4000)
+  public logManager = new LogManager()
   private envManager = new GlobalEnv()
   private config: ClientConfig = {}
 

@@ -20,6 +20,9 @@ export default class LogManager {
       error && console.error(`尝试添加新内容时发生错误： ${error}`);
     }
 
+
+    config.logPath = logPath
+
     // 处理子进程的输出信息
     child_process.stdout.on('data', (data: any) => {
       const contentJson = that._transformLogToJson(config, data, "LOG")
@@ -41,11 +44,11 @@ export default class LogManager {
   }
 
   //TODO 打印最后50行
-  printLogs(id: number, lines: number = 50) {
-
+  printLogs(config: AppConfig, lines: number = 50) {
+    console.log(config);
   }
 
-  _transformLogToJson(config: AppConfig, data: any, type: string) {
+  private _transformLogToJson(config: AppConfig, data: any, type: string) {
     return JSON.stringify({
       message: data.toString(),
       type: type,
@@ -54,7 +57,7 @@ export default class LogManager {
     }) + '\n'
   }
 
-  __transformJsonToLine() {
+  private __transformJsonToLine() {
 
   }
 

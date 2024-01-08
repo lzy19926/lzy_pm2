@@ -8,7 +8,7 @@ import ProgressManagerClient from './Client'
 import { parseCommand, isConfigFile } from './Utils'
 import { showTerminalList } from '../common/terminal-table'
 
-import type { AppConfigTpl } from '../common/ClusterDB'
+import type { AppConfig, AppConfigTpl } from '../common/ClusterDB'
 import type { ClientConfig } from './Client'
 // 对外暴露的用户API
 export default class API {
@@ -26,8 +26,14 @@ export default class API {
     }
   }
 
-  logs(idOrName: number | string) {
+  async logs(idOrName: number | string) {
+    const list = await this.client.executeRemote("getMonitorData") as AppConfig[]
 
+    const appConfig = list.find(cfg => cfg.id == idOrName || cfg.name == idOrName)
+
+    if (!appConfig) return console.warn(`错误ID或Name:${idOrName}`)
+
+    this.client.logManager.printLogs(appConfig, 50)
   }
 
   delete() { }

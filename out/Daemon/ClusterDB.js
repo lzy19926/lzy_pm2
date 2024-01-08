@@ -18,20 +18,24 @@ class ClusterDB {
             .from(this._map.values())
             .sort((a, b) => a.id - b.id);
     }
+    // 储存一个config
+    set(config) {
+        this._map.set(this._count, config);
+        this._count++;
+    }
     // 创建一个新Config
     create(tpl = {}) {
-        let appConfig = {
+        let newConfig = {
             id: this._count,
             pid: -1,
             name: tpl.name || "default",
             cwd: tpl.cwd || process.cwd(),
             script: tpl.script || "",
-            scriptFullPath: "",
+            scriptFullPath: tpl.scriptFullPath || "",
             options: tpl.options || {},
         };
-        this._map.set(this._count, appConfig);
-        this._count++;
-        return appConfig;
+        this.set(newConfig);
+        return newConfig;
     }
     // 配置校验
     verifyConfig(appConfig) {

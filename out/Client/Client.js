@@ -20,10 +20,12 @@ const path_1 = __importDefault(require("path"));
 const RPC_1 = require("../common/RPC");
 const Utils_1 = require("./Utils");
 const node_child_process_1 = require("node:child_process");
+const LogManager_1 = __importDefault(require("../common/LogManager"));
 // PM2调用客户端
 class ProgressManagerClient {
     constructor(config) {
         this.RPCClient = new RPC_1.RPCClient(4000);
+        this.logManager = new LogManager_1.default();
         this.envManager = new Utils_1.GlobalEnv();
         this.config = {};
         this._parseConfig(config);

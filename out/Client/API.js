@@ -37,6 +37,13 @@ class API {
         }
     }
     logs(idOrName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const list = yield this.client.executeRemote("getMonitorData");
+            const appConfig = list.find(cfg => cfg.id == idOrName || cfg.name == idOrName);
+            if (!appConfig)
+                return console.warn(`错误ID或Name:${idOrName}`);
+            this.client.logManager.printLogs(appConfig, 50);
+        });
     }
     delete() { }
     deleteAll() { }

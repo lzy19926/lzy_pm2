@@ -32,6 +32,7 @@ class ClusterDB {
             cwd: tpl.cwd || process.cwd(),
             script: tpl.script || "",
             scriptFullPath: tpl.scriptFullPath || "",
+            logPath: tpl.logPath || "",
             options: tpl.options || {},
         };
         this.set(newConfig);

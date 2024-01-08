@@ -13,6 +13,7 @@ export interface AppConfig {
   cwd: string
   script: string
   scriptFullPath: string
+  logPath: string
   options: Record<string, boolean>
 }
 
@@ -49,6 +50,7 @@ export default class ClusterDB {
       cwd: tpl.cwd || process.cwd(),
       script: tpl.script || "",
       scriptFullPath: tpl.scriptFullPath || "",
+      logPath: tpl.logPath || "",
       options: tpl.options || {},
     };
 
