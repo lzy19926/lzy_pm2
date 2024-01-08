@@ -10,11 +10,8 @@ const client = api.client
 api.start(path.resolve(__dirname, './child_process.js'))
 
 
-// 打印日志
-setTimeout(() => { }, 1000 * 1)
-
 
 // 关闭pm2
 setTimeout(() => {
   client.killDaemon()
-}, 1000 * 3)
+}, 1000 * 30)

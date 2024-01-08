@@ -65,28 +65,27 @@ class ProgressManagerClient {
     }
     // 创建守护进程
     _spawnDaemon() {
-        var _a;
         const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
         let daemon_process = (0, node_child_process_1.spawn)("node", [DaemonJS], {
             detached: true,
             cwd: process.cwd(),
             windowsHide: true,
             env: Object.assign({}, process.env),
-            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+            stdio: ['ignore', 'ignore', 'ignore', 'ignore'], // 只有当父进程忽略子进程IO时, 子进程才能保持
         });
         //TODO 守护进程的输出到专门的日志文件
         // 处理子进程的输出信息
-        if (this.config.showDaemonLog) {
-            (_a = daemon_process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => {
-                console.log(data.toString());
-            });
-            // daemon_process.stderr.on('data', (err: any) => {
-            //   console.error(err.toString());
-            // });
-            // daemon_process.on('message', (msg: any) => {
-            //   console.log(`Received message from other process : ${msg}`);
-            // });
-        }
+        // if (this.config.showDaemonLog) {
+        //   daemon_process.stdout?.on('data', (data: any) => {
+        //     console.log(data.toString());
+        //   });
+        // daemon_process.stderr.on('data', (err: any) => {
+        //   console.error(err.toString());
+        // });
+        // daemon_process.on('message', (msg: any) => {
+        //   console.log(`Received message from other process : ${msg}`);
+        // });
+        // }
         return daemon_process;
     }
     // 检查是否已经运行Daemon

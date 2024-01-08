@@ -69,25 +69,25 @@ export default class ProgressManagerClient {
       cwd: process.cwd(),
       windowsHide: true,
       env: Object.assign({}, process.env),
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+      stdio: ['ignore', 'ignore', 'ignore', 'ignore'],// 只有当父进程忽略子进程IO时, 子进程才能保持
     });
 
 
     //TODO 守护进程的输出到专门的日志文件
     // 处理子进程的输出信息
-    if (this.config.showDaemonLog) {
-      daemon_process.stdout?.on('data', (data: any) => {
-        console.log(data.toString());
-      });
+    // if (this.config.showDaemonLog) {
+    //   daemon_process.stdout?.on('data', (data: any) => {
+    //     console.log(data.toString());
+    //   });
 
-      // daemon_process.stderr.on('data', (err: any) => {
-      //   console.error(err.toString());
-      // });
+    // daemon_process.stderr.on('data', (err: any) => {
+    //   console.error(err.toString());
+    // });
 
-      // daemon_process.on('message', (msg: any) => {
-      //   console.log(`Received message from other process : ${msg}`);
-      // });
-    }
+    // daemon_process.on('message', (msg: any) => {
+    //   console.log(`Received message from other process : ${msg}`);
+    // });
+    // }
 
     return daemon_process
   }

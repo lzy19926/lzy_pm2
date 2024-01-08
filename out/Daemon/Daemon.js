@@ -9,7 +9,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const God_1 = __importDefault(require("./God"));
-const fs = require('fs');
 class Daemon {
     constructor() {
         this.god = new God_1.default();
