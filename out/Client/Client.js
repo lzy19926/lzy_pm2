@@ -87,17 +87,17 @@ class ProgressManagerClient {
         });
         //TODO 守护进程的输出到专门的日志文件
         // 处理子进程的输出信息
-        (_a = daemon_process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => {
-            console.log(data.toString());
-        });
-        // 处理子进程的错误信息
-        // daemon_process.stderr.on('data', (err: any) => {
-        //   console.error(err.toString());
-        // });
-        // 处理子进程的接受数据
-        // daemon_process.on('message', (msg: any) => {
-        //   console.log(`Received message from other process : ${msg}`);
-        // });
+        if (this.config.showDaemonLog) {
+            (_a = daemon_process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => {
+                console.log(data.toString());
+            });
+            // daemon_process.stderr.on('data', (err: any) => {
+            //   console.error(err.toString());
+            // });
+            // daemon_process.on('message', (msg: any) => {
+            //   console.log(`Received message from other process : ${msg}`);
+            // });
+        }
         return daemon_process;
     }
     // 检查是否已经运行Daemon
