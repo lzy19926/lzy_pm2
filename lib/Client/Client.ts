@@ -6,9 +6,8 @@
 import path from 'path'
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from './Utils'
-import LogManager from './LogManager'
 import { spawn } from 'node:child_process'
-import { showTerminalList } from '../common/terminal-table'
+
 
 //
 export interface ClientConfig {
@@ -20,9 +19,7 @@ export interface ClientConfig {
 export default class ProgressManagerClient {
 
   public RPCClient = new RPCClient(4000)
-
   private envManager = new GlobalEnv()
-  private logManager = new LogManager()
   private config: ClientConfig = {}
 
   constructor(config?: ClientConfig) {
@@ -41,14 +38,10 @@ export default class ProgressManagerClient {
 
     const daemon = this._spawnDaemon()
 
-    // 修改全局env
     this.envManager.setEnv("LZY_PM2_RUNNING", "true")
     this.envManager.setEnv("LZY_PM2_PID", daemon.pid)
 
     console.log(`Daemon Running PID:${daemon.pid}`);
-
-    // 显示list
-    this.showProgressList()
   }
 
   // 杀死守护进程
@@ -64,12 +57,6 @@ export default class ProgressManagerClient {
     } catch (e) {
       console.error(`Daemon killed FAILED PID:${pid}`, e);
     }
-  }
-
-  // 显示所有进程列表
-  async showProgressList() {
-    const list = await this.executeRemote("getMonitorData")
-    showTerminalList(list)
   }
 
   // 创建守护进程
@@ -128,10 +115,6 @@ export default class ProgressManagerClient {
     this.config = defaultConfig
     return this.config
   }
-
-
-
-  //TODO pingDaemon() { }
 
   //TODO getAllProcess() { }
 

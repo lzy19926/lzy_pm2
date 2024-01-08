@@ -6,6 +6,8 @@
 import path from 'path'
 import ProgressManagerClient from './Client'
 import { parseCommand, isConfigFile } from './Utils'
+import { showTerminalList } from '../common/terminal-table'
+
 import type { AppConfigTpl } from '../common/ClusterDB'
 import type { ClientConfig } from './Client'
 // 对外暴露的用户API
@@ -18,18 +20,25 @@ export default class API {
 
   start(cmd: string) {
     if (isConfigFile(cmd)) {
-      this._startConfigJson(cmd, () => this._showTerminalList())
+      this._startConfigJson(cmd, () => this.list())
     } else {
-      this._startScript(cmd, () => this._showTerminalList())
+      this._startScript(cmd, () => this.list())
     }
+  }
+
+  logs(idOrName: number | string) {
+
   }
 
   delete() { }
 
   deleteAll() { }
 
+
+  // 显示所有进程列表
   async list() {
-    this.client.showProgressList()
+    const list = await this.client.executeRemote("getMonitorData")
+    showTerminalList(list)
   }
 
   private _startConfigJson(cmd: string, cb: Function) { }
@@ -52,12 +61,8 @@ export default class API {
       configTpl.scriptFullPath = path.resolve(that.cwd, scriptPath)
 
       await that.client.executeRemote("forkModeCreateProcess", [configTpl])
-
-      that.list()
     }
     // 通过path重启一个进程
     function restartExistingProcessPath() { }
   }
-
-  private _showTerminalList() { }
 }
