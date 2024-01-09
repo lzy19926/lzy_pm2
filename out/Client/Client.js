@@ -17,6 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
+const node_fs_1 = __importDefault(require("node:fs"));
 const RPC_1 = require("../common/RPC");
 const Utils_1 = require("./Utils");
 const node_child_process_1 = require("node:child_process");
@@ -66,14 +67,18 @@ class ProgressManagerClient {
     // 创建守护进程
     _spawnDaemon() {
         const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
+        const DAEMON_LOG_FILE_PATH = path_1.default.resolve(__dirname, "../../cache/0_logFile.json");
+        const outStream = node_fs_1.default.openSync(DAEMON_LOG_FILE_PATH, "a");
         let daemon_process = (0, node_child_process_1.spawn)("node", [DaemonJS], {
             detached: true,
             cwd: process.cwd(),
             windowsHide: true,
             env: Object.assign({}, process.env),
-            stdio: ['ignore', 'ignore', 'ignore', 'ignore'], // 只有当父进程忽略子进程IO时, 子进程才能保持
+            // 守护进程的输出到专门的日志文件
+            // 只有当父进程未链接子进程IO时, 子进程才能单独保持
+            stdio: ['ignore', outStream, outStream, 'ignore'],
         });
-        //TODO 守护进程的输出到专门的日志文件
+        daemon_process.unref();
         // 处理子进程的输出信息
         // if (this.config.showDaemonLog) {
         //   daemon_process.stdout?.on('data', (data: any) => {

@@ -12,4 +12,4 @@ api.start(path.resolve(__dirname, './child_process.js'))
 // 关闭pm2
 setTimeout(() => {
   client.killDaemon()
-}, 1000 * 30)
+}, 1000 * 3)

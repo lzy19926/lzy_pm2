@@ -4,6 +4,7 @@
 *******************************************/
 
 import path from 'path'
+import fs from "node:fs"
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from './Utils'
 import { spawn } from 'node:child_process'
@@ -64,16 +65,22 @@ export default class ProgressManagerClient {
   private _spawnDaemon() {
     const DaemonJS = path.resolve(__dirname, "../Daemon/Daemon.js")
 
+    const DAEMON_LOG_FILE_PATH = path.resolve(__dirname, "../../cache/0_logFile.json")
+    const outStream = fs.openSync(DAEMON_LOG_FILE_PATH, "a")
+
+
     let daemon_process = spawn("node", [DaemonJS], {
       detached: true,
       cwd: process.cwd(),
       windowsHide: true,
       env: Object.assign({}, process.env),
-      stdio: ['ignore', 'ignore', 'ignore', 'ignore'],// 只有当父进程忽略子进程IO时, 子进程才能保持
+      // 守护进程的输出到专门的日志文件
+      // 只有当父进程未链接子进程IO时, 子进程才能单独保持
+      stdio: ['ignore', outStream, outStream, 'ignore'],
     });
 
+    daemon_process.unref();
 
-    //TODO 守护进程的输出到专门的日志文件
     // 处理子进程的输出信息
     // if (this.config.showDaemonLog) {
     //   daemon_process.stdout?.on('data', (data: any) => {
