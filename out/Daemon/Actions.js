@@ -25,6 +25,10 @@ class ActionMethods {
     getMonitorData() {
         return this.god.clusterDB.getAll();
     }
+    // 获取日志记录
+    getProcessLogs(id) {
+        return this.god.logManager.getLogs(id);
+    }
     // 创建子进程
     forkModeCreateProcess(tpl) {
         const newConfig = this.god.clusterDB.create(tpl);

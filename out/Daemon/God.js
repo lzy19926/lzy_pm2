@@ -12,7 +12,7 @@ const Watcher_1 = __importDefault(require("./Watcher"));
 const Forker_1 = __importDefault(require("./Forker"));
 const ClusterDB_1 = __importDefault(require("../common/ClusterDB"));
 const RPC_1 = require("../common/RPC");
-const LogManager_1 = __importDefault(require("../common/LogManager"));
+const LogManager_1 = __importDefault(require("./LogManager"));
 class God {
     constructor() {
         this.RPCServer = new RPC_1.RPCServer(4000);
@@ -20,7 +20,7 @@ class God {
         this.clusterDB = new ClusterDB_1.default(this);
         this.forker = new Forker_1.default(this);
         this.watcher = new Watcher_1.default(this);
-        this.logManager = new LogManager_1.default();
+        this.logManager = new LogManager_1.default(this);
     }
     // 进行通知
     notify() { }
