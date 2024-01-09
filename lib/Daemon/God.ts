@@ -8,7 +8,7 @@ import ClusterWatcher from './Watcher'
 import Forker from './Forker'
 import ClusterDB from '../common/ClusterDB'
 import { RPCServer } from '../common/RPC'
-import LogManager from '../common/LogManager'
+import LogManager from './LogManager'
 
 export default class God {
 
@@ -17,7 +17,7 @@ export default class God {
   public clusterDB = new ClusterDB(this)
   public forker = new Forker(this)
   private watcher = new ClusterWatcher(this)
-  public logManager = new LogManager()
+  public logManager = new LogManager(this)
 
   constructor() { }
 

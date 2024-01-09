@@ -7,9 +7,11 @@ import os from 'node:os'
 import readline from 'node:readline'
 import path from 'node:path'
 import dayjs from 'dayjs'
+import type God from './God';
 import type { ChildProcess } from 'child_process'
-import type { AppConfig } from './ClusterDB'
+import type { AppConfig } from '../common/ClusterDB'
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
+
 
 
 type Process = ChildProcess | ChildProcessWithoutNullStreams | NodeJS.Process
@@ -18,7 +20,7 @@ export default class LogManager {
 
   private CACHE_DIR: string = path.resolve(__dirname, "../../cache")
 
-  constructor() { }
+  constructor(private god: God) { }
 
   startLogging(process: Process, config: AppConfig) {
     const that = this
@@ -51,15 +53,24 @@ export default class LogManager {
 
   }
 
-  //TODO 打印最后50行日志
-  printLogs(config: AppConfig, lines: number = 50) {
+  //TODO 获取最后50行日志
+  getLogs(id: number, lines: number = 50) {
     const that = this
+    const config = this.god.clusterDB.get(id)
+
+    if (!config) {
+      return console.error(`错误id:${id}`)
+    }
+
     const stream = fs.createReadStream(config.logPath, { encoding: 'utf8' });
     const rl = readline.createInterface({ input: stream });
 
+    let res = "11"
     rl.on("line", line => {
-      console.log(that.__transformJsonToLine(line))
+      res += that.__transformJsonToLine(line)
     })
+
+    return res
   }
 
   // 删除日志文件

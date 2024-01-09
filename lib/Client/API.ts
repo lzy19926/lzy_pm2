@@ -27,13 +27,8 @@ export default class API {
   }
 
   async logs(idOrName: number | string) {
-    const list = await this.client.executeRemote("getMonitorData") as AppConfig[]
-
-    const appConfig = list.find(cfg => cfg.id == idOrName || cfg.name == idOrName)
-
-    if (!appConfig) return console.warn(`错误ID或Name:${idOrName}`)
-
-    this.client.logManager.printLogs(appConfig, 50)
+    const l = await this.client.executeRemote("getProcessLogs", [idOrName])
+    console.log(l);
   }
 
   delete() { }

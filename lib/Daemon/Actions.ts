@@ -30,6 +30,11 @@ export default class ActionMethods {
     return this.god.clusterDB.getAll()
   }
 
+  // 获取日志记录
+  getProcessLogs(id: number) {
+    return this.god.logManager.getLogs(id)
+  }
+
   // 创建子进程
   forkModeCreateProcess(tpl: AppConfigTpl) {
     const newConfig = this.god.clusterDB.create(tpl)
