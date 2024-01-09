@@ -5,10 +5,9 @@ import God from '../Daemon/God';
 import ProgressManagerClient from '../Client/Client';
 
 // 基于WebSocket的守护进程通信模块, 用于API调用
-//TODO PM2应使用rpc技术进行远程调用  而不是ws
 export class SocketIPCServer {
   private _wss?: WebSocketServer
-  private _ws?: WebSocket //TODO 后续可能会房间化
+  private _ws?: WebSocket
   private god: God
 
   constructor(god: God) {

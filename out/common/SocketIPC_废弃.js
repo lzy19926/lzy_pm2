@@ -8,7 +8,6 @@ exports.SocketIPCClient = exports.SocketIPCServer = void 0;
 const ws_1 = require("ws");
 const ws_2 = __importDefault(require("ws"));
 // 基于WebSocket的守护进程通信模块, 用于API调用
-//TODO PM2应使用rpc技术进行远程调用  而不是ws
 class SocketIPCServer {
     constructor(god) {
         this.god = god;

@@ -1,11 +1,11 @@
 ## 仿写的Lzy_PM2进程管理工具
 
-提供功能
-基本的进程控制
-日志记录查询
-TODO 无宕机重启
-TODO cluster模式与fork模式启动进程
-TODO cluster模式简易负载均衡
+- 提供功能
+- 基本的进程控制
+- 日志记录查询
+- TODO 无宕机重启
+- TODO cluster模式与fork模式启动进程
+- TODO cluster模式简易负载均衡
 
 ## EXAMPLE
 
@@ -20,7 +20,7 @@ node cli.js list
 // 杀死守护进程(会停止所有子进程)
 node cli.js kill
 // 查看某个进程日志(使用id或name)
-node cli.js logs 0
+node cli.js logs 1
 ~~~
 
 ![Alt Text](./doc/list.png)
