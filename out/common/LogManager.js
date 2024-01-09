@@ -13,11 +13,13 @@ const node_readline_1 = __importDefault(require("node:readline"));
 const node_path_1 = __importDefault(require("node:path"));
 const dayjs_1 = __importDefault(require("dayjs"));
 class LogManager {
-    constructor() { }
+    constructor() {
+        this.CACHE_DIR = node_path_1.default.resolve(__dirname, "../../cache");
+    }
     startLogging(process, config) {
         var _a, _b, _c;
         const that = this;
-        const logPath = node_path_1.default.resolve(__dirname, "../../cache", `${config.id}_logFile.json`);
+        const logPath = node_path_1.default.resolve(this.CACHE_DIR, `${config.id}_logFile.json`);
         const writableStream = node_fs_1.default.createWriteStream(logPath, { flags: "a" });
         const onLogError = (error) => {
             error && console.error(`尝试添加新内容时发生错误： ${error}`);
@@ -46,6 +48,13 @@ class LogManager {
         const rl = node_readline_1.default.createInterface({ input: stream });
         rl.on("line", line => {
             console.log(that.__transformJsonToLine(line));
+        });
+    }
+    // 删除日志文件
+    deleteLogCache(id) {
+        const logPath = node_path_1.default.resolve(this.CACHE_DIR, `${id}_logFile.json`);
+        node_fs_1.default.unlink(logPath, (err) => {
+            console.log("日志文件删除失败", logPath, err);
         });
     }
     _transformLogToJson(config, data, type) {

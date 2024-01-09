@@ -15,11 +15,14 @@ import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 type Process = ChildProcess | ChildProcessWithoutNullStreams | NodeJS.Process
 
 export default class LogManager {
+
+  private CACHE_DIR: string = path.resolve(__dirname, "../../cache")
+
   constructor() { }
 
   startLogging(process: Process, config: AppConfig) {
     const that = this
-    const logPath = path.resolve(__dirname, "../../cache", `${config.id}_logFile.json`)
+    const logPath = path.resolve(this.CACHE_DIR, `${config.id}_logFile.json`)
     const writableStream = fs.createWriteStream(logPath, { flags: "a" });
 
     const onLogError = (error: Error | null | undefined) => {
@@ -56,6 +59,14 @@ export default class LogManager {
 
     rl.on("line", line => {
       console.log(that.__transformJsonToLine(line))
+    })
+  }
+
+  // 删除日志文件
+  deleteLogCache(id: number) {
+    const logPath = path.resolve(this.CACHE_DIR, `${id}_logFile.json`)
+    fs.unlink(logPath, (err) => {
+      console.log("日志文件删除失败", logPath, err);
     })
   }
 
