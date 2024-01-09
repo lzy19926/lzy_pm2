@@ -23,10 +23,8 @@
  *
 *******************************************/
 
-
 const rpc = require('pm2-axon-rpc')
 const axon = require('pm2-axon')
-
 
 export class RPCServer {
 

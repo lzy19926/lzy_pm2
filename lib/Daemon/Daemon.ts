@@ -4,10 +4,8 @@
  *  @author lzy19926
 *******************************************/
 
-
 import God from './God'
 import path from 'node:path'
-
 
 class Daemon {
   private god = new God()

@@ -2,9 +2,9 @@
  * TODO日志管理模块
  *  @author lzy19926
 *******************************************/
+
 import fs from 'node:fs'
 import path from 'node:path'
-import readline from 'node:readline'
 import * as Utils from '../common/Utils'
 
 import type God from './God';

@@ -4,7 +4,6 @@
  *  @author lzy19926
 *******************************************/
 
-
 import God from './God';
 
 export default class ClusterWatcher {

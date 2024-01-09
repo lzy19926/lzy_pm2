@@ -4,9 +4,11 @@
  *  @author lzy19926
 *******************************************/
 
+import { spawn } from 'node:child_process'
+
 import type God from "./God"
 import type { AppConfig } from '../common/ClusterDB'
-import { spawn } from 'node:child_process'
+
 export default class Forker {
   constructor(private god: God) { }
 

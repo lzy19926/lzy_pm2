@@ -4,6 +4,7 @@
 *******************************************/
 
 const Table = require("cli-tableau")
+
 import type { AppConfig } from "./ClusterDB"
 
 const extension = 2

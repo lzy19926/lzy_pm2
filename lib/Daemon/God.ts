@@ -3,12 +3,12 @@
  *  @author lzy19926
 *******************************************/
 
-import ActionMethods from './Actions'
-import ClusterWatcher from './Watcher'
 import Forker from './Forker'
-import ClusterDB from '../common/ClusterDB'
-import { RPCServer } from '../common/RPC'
+import ActionMethods from './Actions'
 import LogManager from './LogManager'
+import ClusterWatcher from './Watcher'
+import { RPCServer } from '../common/RPC'
+import ClusterDB from '../common/ClusterDB'
 
 export default class God {
 
