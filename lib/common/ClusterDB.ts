@@ -26,7 +26,16 @@ export default class ClusterDB {
   private _count = 0
   constructor(private god: God) { }
 
-  get(idOrName: number | string) { }
+  get(idOrName: string | number) {
+
+    if (typeof idOrName == 'number') {
+      return this._map.get(idOrName)
+    }
+    //TODO 提供name支持
+    else {
+      return this._map.get(0)
+    }
+  }
 
   // 获取全部config并排序
   getAll(): AppConfig[] {

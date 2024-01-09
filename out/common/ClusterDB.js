@@ -11,7 +11,15 @@ class ClusterDB {
         this._map = new Map();
         this._count = 0;
     }
-    get(idOrName) { }
+    get(idOrName) {
+        if (typeof idOrName == 'number') {
+            return this._map.get(idOrName);
+        }
+        //TODO 提供name支持
+        else {
+            return this._map.get(0);
+        }
+    }
     // 获取全部config并排序
     getAll() {
         return Array

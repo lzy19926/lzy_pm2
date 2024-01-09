@@ -1,11 +1,15 @@
 /******************************************
- * Client侧使用的工具集
+ * 使用的工具函数集
  *  @author lzy19926
 *******************************************/
 
 
 import path from 'path'
 import fs from 'fs'
+import os from 'node:os'
+import dayjs from 'dayjs'
+
+import type { AppConfig } from './ClusterDB'
 
 // 判断是否是启动配置文件
 export function isConfigFile(cmd: string): boolean {
@@ -64,4 +68,40 @@ export class GlobalEnv {
     }
     return this._env[key]
   }
+}
+
+// 日志log转为JSON
+export function transformLogToJson(config: AppConfig, data: any, type: string) {
+  return JSON.stringify({
+    message: data.toString().replace(/\n/g, ''),
+    type: type,
+    timestamp: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    app_name: config.name
+  }) + os.EOL
+}
+
+// 日志JSON转为输出行
+export function transformJsonToLine(json: string) {
+  const { type, message, app_name, timestamp } = JSON.parse(json)
+
+  let COLORS = {
+    red: "\x1b[0m",
+    white: "\x1b[37m",
+    green: "\x1b[32m",
+    orange: "\x1b[33m"
+  }
+
+  let colorPrefix = COLORS.white
+  switch (type) {
+    case "LOG": colorPrefix = COLORS.white; break
+    case "WARN": colorPrefix = COLORS.orange; break
+    case "ERROR": colorPrefix = COLORS.red; break
+    default: colorPrefix = COLORS.white; break
+  }
+
+  const formatted =
+    `${colorPrefix} [${type}] [${app_name}] ${timestamp}\n` +
+    `${COLORS.white} ${message}`
+
+  return formatted
 }

@@ -7,9 +7,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GlobalEnv = exports.parseCommand = exports.isConfigFile = void 0;
+exports.transformJsonToLine = exports.transformLogToJson = exports.GlobalEnv = exports.parseCommand = exports.isConfigFile = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const node_os_1 = __importDefault(require("node:os"));
+const dayjs_1 = __importDefault(require("dayjs"));
 // 判断是否是启动配置文件
 function isConfigFile(cmd) {
     return false;
@@ -66,3 +68,42 @@ class GlobalEnv {
     }
 }
 exports.GlobalEnv = GlobalEnv;
+// 日志log转为JSON
+function transformLogToJson(config, data, type) {
+    return JSON.stringify({
+        message: data.toString().replace(/\n/g, ''),
+        type: type,
+        timestamp: (0, dayjs_1.default)().format('YYYY-MM-DD HH:mm:ss'),
+        app_name: config.name
+    }) + node_os_1.default.EOL;
+}
+exports.transformLogToJson = transformLogToJson;
+// 日志JSON转为输出行
+function transformJsonToLine(json) {
+    const { type, message, app_name, timestamp } = JSON.parse(json);
+    let COLORS = {
+        red: "\x1b[0m",
+        white: "\x1b[37m",
+        green: "\x1b[32m",
+        orange: "\x1b[33m"
+    };
+    let colorPrefix = COLORS.white;
+    switch (type) {
+        case "LOG":
+            colorPrefix = COLORS.white;
+            break;
+        case "WARN":
+            colorPrefix = COLORS.orange;
+            break;
+        case "ERROR":
+            colorPrefix = COLORS.red;
+            break;
+        default:
+            colorPrefix = COLORS.white;
+            break;
+    }
+    const formatted = `${colorPrefix} [${type}] [${app_name}] ${timestamp}\n` +
+        `${COLORS.white} ${message}`;
+    return formatted;
+}
+exports.transformJsonToLine = transformJsonToLine;

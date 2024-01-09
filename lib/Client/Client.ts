@@ -6,14 +6,12 @@
 import path from 'path'
 import fs from "node:fs"
 import { RPCClient } from '../common/RPC'
-import { GlobalEnv } from './Utils'
+import { GlobalEnv } from '../common/Utils'
 import { spawn } from 'node:child_process'
-
 //
 export interface ClientConfig {
   showDaemonLog?: boolean
 }
-
 
 // PM2调用客户端
 export default class ProgressManagerClient {
@@ -61,11 +59,9 @@ export default class ProgressManagerClient {
 
   // 创建守护进程
   private _spawnDaemon() {
-    const DaemonJS = path.resolve(__dirname, "../Daemon/Daemon.js")
-
     const DAEMON_LOG_FILE_PATH = path.resolve(__dirname, "../../cache/0_logFile.json")
     const outStream = fs.openSync(DAEMON_LOG_FILE_PATH, "a")
-
+    const DaemonJS = path.resolve(__dirname, "../Daemon/Daemon.js")
 
     let daemon_process = spawn("node", [DaemonJS], {
       detached: true,
@@ -78,21 +74,6 @@ export default class ProgressManagerClient {
     });
 
     daemon_process.unref();
-
-    // 处理子进程的输出信息
-    // if (this.config.showDaemonLog) {
-    //   daemon_process.stdout?.on('data', (data: any) => {
-    //     console.log(data.toString());
-    //   });
-
-    // daemon_process.stderr.on('data', (err: any) => {
-    //   console.error(err.toString());
-    // });
-
-    // daemon_process.on('message', (msg: any) => {
-    //   console.log(`Received message from other process : ${msg}`);
-    // });
-    // }
 
     return daemon_process
   }

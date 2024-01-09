@@ -30,9 +30,10 @@ export default class ActionMethods {
     return this.god.clusterDB.getAll()
   }
 
-  // 获取日志记录
-  getProcessLogs(id: number) {
-    return this.god.logManager.getLogs(id)
+  // 获取日志文件路径
+  getProcessLogsFile(id: number) {
+    const config = this.god.clusterDB.get(id)
+    return config?.logPath
   }
 
   // 创建子进程

@@ -19,7 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const node_fs_1 = __importDefault(require("node:fs"));
 const RPC_1 = require("../common/RPC");
-const Utils_1 = require("./Utils");
+const Utils_1 = require("../common/Utils");
 const node_child_process_1 = require("node:child_process");
 // PM2调用客户端
 class ProgressManagerClient {
@@ -64,9 +64,9 @@ class ProgressManagerClient {
     }
     // 创建守护进程
     _spawnDaemon() {
-        const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
         const DAEMON_LOG_FILE_PATH = path_1.default.resolve(__dirname, "../../cache/0_logFile.json");
         const outStream = node_fs_1.default.openSync(DAEMON_LOG_FILE_PATH, "a");
+        const DaemonJS = path_1.default.resolve(__dirname, "../Daemon/Daemon.js");
         let daemon_process = (0, node_child_process_1.spawn)("node", [DaemonJS], {
             detached: true,
             cwd: process.cwd(),
@@ -77,18 +77,6 @@ class ProgressManagerClient {
             stdio: ['ignore', outStream, outStream, 'ignore'],
         });
         daemon_process.unref();
-        // 处理子进程的输出信息
-        // if (this.config.showDaemonLog) {
-        //   daemon_process.stdout?.on('data', (data: any) => {
-        //     console.log(data.toString());
-        //   });
-        // daemon_process.stderr.on('data', (err: any) => {
-        //   console.error(err.toString());
-        // });
-        // daemon_process.on('message', (msg: any) => {
-        //   console.log(`Received message from other process : ${msg}`);
-        // });
-        // }
         return daemon_process;
     }
     // 检查是否已经运行Daemon

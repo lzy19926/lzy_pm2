@@ -4,8 +4,10 @@
  *  @author lzy19926
 *******************************************/
 import path from 'path'
+import fs from 'node:fs'
+import readline from 'node:readline'
+import * as Utils from '../common/Utils'
 import ProgressManagerClient from './Client'
-import { parseCommand, isConfigFile } from './Utils'
 import { showTerminalList } from '../common/terminal-table'
 
 import type { AppConfig, AppConfigTpl } from '../common/ClusterDB'
@@ -19,16 +21,27 @@ export default class API {
   constructor(private config?: ClientConfig) { }
 
   start(cmd: string) {
-    if (isConfigFile(cmd)) {
+    if (Utils.isConfigFile(cmd)) {
       this._startConfigJson(cmd, () => this.list())
     } else {
       this._startScript(cmd, () => this.list())
     }
   }
 
-  async logs(idOrName: number | string) {
-    const l = await this.client.executeRemote("getProcessLogs", [idOrName])
-    console.log(l);
+  //TODO 打印50行日志 重写这部分实现
+  async logs(idOrName: string) {
+    const logPath = await this.client.executeRemote("getProcessLogsFile", [parseInt(idOrName)])
+
+    if (!logPath) {
+      return console.error(`错误id:${idOrName}`)
+    }
+
+    const stream = fs.createReadStream(logPath, { encoding: 'utf8' });
+    const rl = readline.createInterface({ input: stream });
+
+    rl.on("line", line => {
+      console.log(Utils.transformJsonToLine(line));
+    })
   }
 
   delete() { }
@@ -46,7 +59,7 @@ export default class API {
 
   private _startScript(cmd: string, cb: Function) {
     const that = this
-    const { scriptPath, options } = parseCommand(cmd)
+    const { scriptPath, options } = Utils.parseCommand(cmd)
 
     startNewProcessPath()
 
