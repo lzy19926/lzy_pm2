@@ -105,7 +105,7 @@ class API {
                 configTpl.script = scriptPath;
                 configTpl.options = options;
                 configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
-                yield that.client.executeRemote("forkModeCreateProcess", [configTpl]);
+                yield that.client.executeRemote("createProcess", [configTpl]);
             });
         }
         // 通过path重启一个进程

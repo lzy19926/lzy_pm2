@@ -82,7 +82,7 @@ export default class API {
       configTpl.options = options
       configTpl.scriptFullPath = path.resolve(that.cwd, scriptPath)
 
-      await that.client.executeRemote("forkModeCreateProcess", [configTpl])
+      await that.client.executeRemote("createProcess", [configTpl])
     }
     // 通过path重启一个进程
     function restartExistingProcessPath() { }

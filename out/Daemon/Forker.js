@@ -32,6 +32,6 @@ class Forker {
         }
     }
     // clusterMode创建进程
-    clusterMode() { }
+    clusterMode(pm2_env) { }
 }
 exports.default = Forker;

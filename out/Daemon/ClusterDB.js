@@ -41,6 +41,7 @@ class ClusterDB {
             script: tpl.script || "",
             scriptFullPath: tpl.scriptFullPath || "",
             logPath: tpl.logPath || "",
+            mode: tpl.mode || "fork",
             options: tpl.options || {},
         };
         this.set(newConfig);

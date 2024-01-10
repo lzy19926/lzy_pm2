@@ -49,7 +49,7 @@ class ProgressManagerClient {
             console.log(`Daemon Running PID:${daemon.pid}`);
         });
     }
-    // 杀死守护进程
+    // TODO杀死守护进程(由进程内部关停)
     killDaemon() {
         return __awaiter(this, void 0, void 0, function* () {
             const pid = this.envManager.getEnv("LZY_PM2_PID");

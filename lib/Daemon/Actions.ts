@@ -37,9 +37,12 @@ export default class ActionMethods {
   }
 
   // 创建子进程
-  forkModeCreateProcess(tpl: AppConfigTpl) {
+  createProcess(tpl: AppConfigTpl) {
     const newConfig = this.god.clusterDB.create(tpl)
-    const child_process = this.god.forker.forkMode(newConfig)
+
+    const child_process = newConfig.mode === "fork"
+      ? this.god.forker.forkMode(newConfig)
+      : this.god.forker.clusterMode(newConfig)
 
     if (typeof child_process !== 'undefined') {
       newConfig.pid = child_process.pid as number

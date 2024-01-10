@@ -31,9 +31,11 @@ class ActionMethods {
         return config === null || config === void 0 ? void 0 : config.logPath;
     }
     // 创建子进程
-    forkModeCreateProcess(tpl) {
+    createProcess(tpl) {
         const newConfig = this.god.clusterDB.create(tpl);
-        const child_process = this.god.forker.forkMode(newConfig);
+        const child_process = newConfig.mode === "fork"
+            ? this.god.forker.forkMode(newConfig)
+            : this.god.forker.clusterMode(newConfig);
         if (typeof child_process !== 'undefined') {
             newConfig.pid = child_process.pid;
             this.god.logManager.startLogging(child_process, newConfig);

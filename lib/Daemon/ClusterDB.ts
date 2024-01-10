@@ -14,6 +14,7 @@ export interface AppConfig {
   script: string
   scriptFullPath: string
   logPath: string
+  mode: "fork" | "cluster"
   options: Record<string, boolean>
 }
 
@@ -60,6 +61,7 @@ export default class ClusterDB {
       script: tpl.script || "",
       scriptFullPath: tpl.scriptFullPath || "",
       logPath: tpl.logPath || "",
+      mode: tpl.mode || "fork",
       options: tpl.options || {},
     };
 
