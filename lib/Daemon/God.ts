@@ -9,15 +9,18 @@ import LogManager from './LogManager'
 import ClusterWatcher from './Watcher'
 import { RPCServer } from '../common/RPC'
 import ClusterDB from '../common/ClusterDB'
+import { EventPubServer } from '../common/PubSub'
 
 export default class God {
 
   public RPCServer = new RPCServer(4000)
-  private actions = new ActionMethods(this)
+  public pubServer = new EventPubServer(4001)
   public clusterDB = new ClusterDB(this)
   public forker = new Forker(this)
-  private watcher = new ClusterWatcher(this)
   public logManager = new LogManager(this)
+  private actions = new ActionMethods(this)
+  private watcher = new ClusterWatcher(this)
+
 
   constructor() { }
 

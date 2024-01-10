@@ -8,6 +8,7 @@ import fs from "node:fs"
 import { RPCClient } from '../common/RPC'
 import { GlobalEnv } from '../common/Utils'
 import { spawn } from 'node:child_process'
+import { EventSubClient } from '../common/PubSub'
 //
 export interface ClientConfig {
   showDaemonLog?: boolean
@@ -17,6 +18,7 @@ export interface ClientConfig {
 export default class ProgressManagerClient {
 
   public RPCClient = new RPCClient(4000)
+  public subClient = new EventSubClient(4001)
   private envManager = new GlobalEnv()
   private config: ClientConfig = {}
 
