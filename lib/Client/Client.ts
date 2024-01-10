@@ -50,13 +50,19 @@ export default class ProgressManagerClient {
 
     try {
       process.kill(pid, 'SIGTERM');
-      this.envManager.setEnv("LZY_PM2_RUNNING", "false")
-      this.envManager.setEnv("LZY_PM2_PID", "")
-
       console.log(`Daemon killed SUCCESS PID:${pid}`);
     } catch (e) {
       console.error(`Daemon killed FAILED PID:${pid}`, e);
+    } finally {
+      this.envManager.setEnv("LZY_PM2_RUNNING", "false")
+      this.envManager.setEnv("LZY_PM2_PID", "")
     }
+  }
+
+  // ping守护进程
+  async pingDaemon() {
+    const pid = await this.executeRemote("ping")
+    console.log(`Daemon running,PID:${pid}`);
   }
 
   // 创建守护进程

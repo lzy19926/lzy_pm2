@@ -21,10 +21,12 @@ const node_fs_1 = __importDefault(require("node:fs"));
 const RPC_1 = require("../common/RPC");
 const Utils_1 = require("../common/Utils");
 const node_child_process_1 = require("node:child_process");
+const PubSub_1 = require("../common/PubSub");
 // PM2调用客户端
 class ProgressManagerClient {
     constructor(config) {
         this.RPCClient = new RPC_1.RPCClient(4000);
+        this.subClient = new PubSub_1.EventSubClient(4001);
         this.envManager = new Utils_1.GlobalEnv();
         this.config = {};
         this._parseConfig(config);
@@ -53,13 +55,22 @@ class ProgressManagerClient {
             const pid = this.envManager.getEnv("LZY_PM2_PID");
             try {
                 process.kill(pid, 'SIGTERM');
-                this.envManager.setEnv("LZY_PM2_RUNNING", "false");
-                this.envManager.setEnv("LZY_PM2_PID", "");
                 console.log(`Daemon killed SUCCESS PID:${pid}`);
             }
             catch (e) {
                 console.error(`Daemon killed FAILED PID:${pid}`, e);
             }
+            finally {
+                this.envManager.setEnv("LZY_PM2_RUNNING", "false");
+                this.envManager.setEnv("LZY_PM2_PID", "");
+            }
+        });
+    }
+    // ping守护进程
+    pingDaemon() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pid = yield this.executeRemote("ping");
+            console.log(`Daemon running,PID:${pid}`);
         });
     }
     // 创建守护进程

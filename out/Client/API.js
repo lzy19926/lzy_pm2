@@ -46,7 +46,6 @@ const node_readline_1 = __importDefault(require("node:readline"));
 const Utils = __importStar(require("../common/Utils"));
 const Client_1 = __importDefault(require("./Client"));
 const terminal_table_1 = require("../common/terminal-table");
-// 对外暴露的用户API
 class API {
     constructor(config) {
         this.config = config;
@@ -71,12 +70,19 @@ class API {
             const stream = node_fs_1.default.createReadStream(logPath, { encoding: 'utf8' });
             const rl = node_readline_1.default.createInterface({ input: stream });
             rl.on("line", line => {
-                console.log(Utils.transformJsonToLine(line));
+                const output = idOrName == "0"
+                    ? line
+                    : Utils.transformJsonToLine(line);
+                console.log(output);
             });
         });
     }
     delete() { }
     deleteAll() { }
+    // pm2整体关停
+    kill() {
+        this.client.killDaemon();
+    }
     // 显示所有进程列表
     list() {
         return __awaiter(this, void 0, void 0, function* () {

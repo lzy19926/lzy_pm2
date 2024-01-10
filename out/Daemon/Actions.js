@@ -39,5 +39,9 @@ class ActionMethods {
             this.god.logManager.startLogging(child_process, newConfig);
         }
     }
+    // 被其他进程ping触发
+    ping() {
+        return process.pid;
+    }
 }
 exports.default = ActionMethods;
