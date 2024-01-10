@@ -21,3 +21,8 @@ switch (command) {
     pm2.kill();
     break;
 }
+
+
+setTimeout(() => {
+  process.exit(1)
+}, 500)
