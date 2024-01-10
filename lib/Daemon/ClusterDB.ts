@@ -4,7 +4,7 @@
  *  @author lzy19926
 *******************************************/
 
-import type God from "../Daemon/God"
+import type God from "./God"
 
 export interface AppConfig {
   id: number

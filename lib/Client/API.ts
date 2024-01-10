@@ -10,7 +10,7 @@ import * as Utils from '../common/Utils'
 import ProgressManagerClient from './Client'
 import { showTerminalList } from '../common/terminal-table'
 
-import type { AppConfig, AppConfigTpl } from '../common/ClusterDB'
+import type { AppConfig, AppConfigTpl } from '../Daemon/ClusterDB'
 import type { ClientConfig } from './Client'
 // 对外暴露的用户API
 export default class API {

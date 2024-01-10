@@ -5,7 +5,7 @@
 *******************************************/
 
 import type God from "./God"
-import type { AppConfigTpl } from '../common/ClusterDB'
+import type { AppConfigTpl } from './ClusterDB'
 
 export default class ActionMethods {
   constructor(private god: God) {

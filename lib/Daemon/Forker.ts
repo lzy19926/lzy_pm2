@@ -7,7 +7,7 @@
 import { spawn } from 'node:child_process'
 
 import type God from "./God"
-import type { AppConfig } from '../common/ClusterDB'
+import type { AppConfig } from './ClusterDB'
 
 export default class Forker {
   constructor(private god: God) { }
@@ -31,6 +31,7 @@ export default class Forker {
       console.log(`App [${pm2_env.name}:${pm2_env.id}] 由-Fork-模式启动`)
 
       var child_process = spawn(command, spawnArgs, spawnOptions)
+
       return child_process
 
     } catch (e) {

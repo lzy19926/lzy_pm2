@@ -8,7 +8,7 @@ import fs from 'fs'
 import os from 'node:os'
 import dayjs from 'dayjs'
 
-import type { AppConfig } from './ClusterDB'
+import type { AppConfig } from '../Daemon/ClusterDB'
 
 // 判断是否是启动配置文件
 export function isConfigFile(cmd: string): boolean {

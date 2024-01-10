@@ -8,7 +8,7 @@ import ActionMethods from './Actions'
 import LogManager from './LogManager'
 import ClusterWatcher from './Watcher'
 import { RPCServer } from '../common/RPC'
-import ClusterDB from '../common/ClusterDB'
+import ClusterDB from './ClusterDB'
 import { EventPubServer } from '../common/PubSub'
 
 export default class God {
