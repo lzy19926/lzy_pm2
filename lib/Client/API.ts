@@ -10,9 +10,9 @@ import * as Utils from '../common/Utils'
 import ProgressManagerClient from './Client'
 import { showTerminalList } from '../common/terminal-table'
 
-import type { AppConfig, AppConfigTpl } from '../Daemon/ClusterDB'
+import type { AppConfigTpl } from '../Daemon/ClusterDB'
 import type { ClientConfig } from './Client'
-// 对外暴露的用户API
+
 export default class API {
 
   private cwd = process.cwd(); // 当前终端目录
@@ -40,7 +40,11 @@ export default class API {
     const rl = readline.createInterface({ input: stream });
 
     rl.on("line", line => {
-      console.log(Utils.transformJsonToLine(line));
+      const output = idOrName == "0"
+        ? line
+        : Utils.transformJsonToLine(line)
+
+      console.log(output);
     })
   }
 
@@ -48,6 +52,10 @@ export default class API {
 
   deleteAll() { }
 
+  // pm2整体关停
+  kill() {
+    this.client.killDaemon()
+  }
 
   // 显示所有进程列表
   async list() {
