@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventSubClient = exports.EventPubServer = void 0;
 /******************************************
@@ -54,5 +63,47 @@ class EventSubClient {
     on(event, cb) {
         return this.sub.on(event, cb);
     }
+    once(event, cb) {
+        return this.sub_sock.once(event, cb);
+    }
+    pingServer() {
+        return new Promise((resolve, reject) => {
+            console.log("[PING PM2] Trying to connect to server");
+            this.sub_sock.once('reconnect attempt', function () {
+                console.log("Daemon Not Launched");
+                resolve(false);
+            });
+            this.sub_sock.once('error', function () {
+                console.log("Ping Daemon Error");
+                resolve(false);
+            });
+            this.sub_sock.once('connect', function () {
+                console.log("Daemon Alive");
+                resolve(true);
+            });
+            this.connect();
+            resolve(false);
+        });
+    }
 }
 exports.EventSubClient = EventSubClient;
+function test() {
+    function emit() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pubServer = new EventPubServer(4002);
+            pubServer.emit("testEvent", "Hello World");
+            const subServer = new EventSubClient(4002);
+            subServer.on("testEvent", (data) => {
+                console.log(data); //=> "Hello World"
+            });
+        });
+    }
+    function ping() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pubServer = new EventPubServer(4002);
+            const subServer = new EventSubClient(4002);
+            const res = yield subServer.pingServer();
+            console.log(res);
+        });
+    }
+}

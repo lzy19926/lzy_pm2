@@ -63,4 +63,55 @@ export class EventSubClient {
   on(event: string, cb: (data: any) => void) {
     return this.sub.on(event, cb);
   }
+
+  once(event: string, cb: (data: any) => void) {
+    return this.sub_sock.once(event, cb)
+  }
+
+  pingServer(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+
+      console.log("[PING PM2] Trying to connect to server");
+
+      this.sub_sock.once('reconnect attempt', function () {
+        console.log("Daemon Not Launched");
+        resolve(false)
+      })
+
+      this.sub_sock.once('error', function () {
+        console.log("Ping Daemon Error");
+        resolve(false)
+      })
+
+      this.sub_sock.once('connect', function () {
+        console.log("Daemon Alive");
+        resolve(true)
+      })
+
+      this.connect()
+      resolve(false)
+    })
+  }
+}
+
+
+function test() {
+  async function emit() {
+    const pubServer = new EventPubServer(4002)
+
+    pubServer.emit("testEvent", "Hello World")
+
+    const subServer = new EventSubClient(4002)
+    subServer.on("testEvent", (data) => {
+      console.log(data); //=> "Hello World"
+    })
+  }
+
+  async function ping() {
+    const pubServer = new EventPubServer(4002)
+    const subServer = new EventSubClient(4002)
+
+    const res = await subServer.pingServer()
+    console.log(res);
+  }
 }
