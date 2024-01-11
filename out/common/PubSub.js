@@ -43,6 +43,9 @@ class EventPubServer {
             console.log("EventPubServer Ready");
         });
     }
+    unBind() {
+        this.pub_sock.close();
+    }
     emit(event, message) {
         return this.pub.emit(event, message);
     }
@@ -67,6 +70,7 @@ class EventSubClient {
         return this.sub_sock.once(event, cb);
     }
     pingServer() {
+        const timeout = 5 * 1000;
         return new Promise((resolve, reject) => {
             console.log("[PING PM2] Trying to connect to server");
             this.sub_sock.once('reconnect attempt', function () {
@@ -81,8 +85,9 @@ class EventSubClient {
                 console.log("Daemon Alive");
                 resolve(true);
             });
-            this.connect();
-            resolve(false);
+            setTimeout(() => {
+                resolve(false);
+            }, timeout);
         });
     }
 }

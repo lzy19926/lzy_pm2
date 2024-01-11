@@ -33,9 +33,13 @@ class RPCServer {
     }
     listen(port) {
         const rep = axon.socket('rep');
+        this._rep = rep;
         this._server = new rpc.Server(rep);
         rep.bind(port);
         console.log("RPCServer Ready");
+    }
+    unBind() {
+        this._rep.close();
     }
     // 将一个函数暴露出去,并重命名(注意:需要绑定this后函数名会改变 add => bound add)
     expose(name, originFn) {

@@ -38,9 +38,15 @@ export class EventPubServer {
     });
   }
 
+  unBind() {
+    this.pub_sock.close()
+  }
+
   emit(event: string, message: any) {
     return this.pub.emit(event, message);
   }
+
+
 }
 
 export class EventSubClient {
@@ -69,6 +75,8 @@ export class EventSubClient {
   }
 
   pingServer(): Promise<boolean> {
+    const timeout = 5 * 1000
+
     return new Promise((resolve, reject) => {
 
       console.log("[PING PM2] Trying to connect to server");
@@ -88,8 +96,9 @@ export class EventSubClient {
         resolve(true)
       })
 
-      this.connect()
-      resolve(false)
+      setTimeout(() => {
+        resolve(false)
+      }, timeout)
     })
   }
 }
