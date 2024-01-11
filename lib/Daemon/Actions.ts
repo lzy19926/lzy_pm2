@@ -18,7 +18,12 @@ export default class ActionMethods {
     const exposeMethods = methodNames
       .filter(name => name != "constructor" && name[0] != "_")
       .map(name => {
-        this.god.RPCServer.expose(name, ((this as any)[name]).bind(this))
+        const wrappedFn = (...args: any[]) => {
+          console.log(`触发Action :${name}`);
+          return (this as any)[name].call(this, ...args)
+        }
+
+        this.god.RPCServer.expose(name, wrappedFn)
         return name
       })
 
@@ -50,8 +55,10 @@ export default class ActionMethods {
     }
   }
 
-  // 被其他进程ping触发
-  ping() {
-    return process.pid
+  // kill守护进程
+  killMe() {
+    this.god.RPCServer.unBind()
+    this.god.pubServer.unBind()
+    process.exit(1)
   }
 }
