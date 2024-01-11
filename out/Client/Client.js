@@ -30,7 +30,6 @@ class ProgressManagerClient {
         this.envManager = new Utils_1.GlobalEnv();
         this.config = {};
         this._parseConfig(config);
-        this.launchDaemon();
     }
     // 执行远程命令,通过RPC直接调用Daemon方法
     executeRemote(command, args) {
@@ -41,7 +40,7 @@ class ProgressManagerClient {
     // 启动守护进程
     launchDaemon() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this._checkDaemon())
+            if (yield this.pingDaemon())
                 return;
             const daemon = this._spawnDaemon();
             this.envManager.setEnv("LZY_PM2_RUNNING", "true");
@@ -49,28 +48,29 @@ class ProgressManagerClient {
             console.log(`Daemon Running PID:${daemon.pid}`);
         });
     }
-    // TODO杀死守护进程(由进程内部关停)
+    // 杀死守护进程(由进程内部关停)
     killDaemon() {
         return __awaiter(this, void 0, void 0, function* () {
-            const pid = this.envManager.getEnv("LZY_PM2_PID");
-            try {
-                process.kill(pid, 'SIGTERM');
-                console.log(`Daemon killed SUCCESS PID:${pid}`);
+            if (!(yield this.pingDaemon())) {
+                return console.log(`Daemon Already Killed`);
             }
-            catch (e) {
-                console.error(`Daemon killed FAILED PID:${pid}`, e);
-            }
-            finally {
-                this.envManager.setEnv("LZY_PM2_RUNNING", "false");
-                this.envManager.setEnv("LZY_PM2_PID", "");
-            }
+            this.executeRemote('killMe');
+            this.envManager.setEnv("LZY_PM2_RUNNING", "false");
+            this.envManager.setEnv("LZY_PM2_PID", "");
+            console.log(`Daemon killed SUCCESS`);
         });
     }
-    // ping守护进程
-    pingDaemon() {
+    // ping守护进程(retry * 3)
+    pingDaemon(retry = 3) {
         return __awaiter(this, void 0, void 0, function* () {
-            const pid = yield this.executeRemote("ping");
-            console.log(`Daemon running,PID:${pid}`);
+            let finalRes = false;
+            while (!finalRes && retry-- > 0) {
+                finalRes = yield this.subClient.pingServer();
+            }
+            finalRes
+                ? console.log("Daemon Alive")
+                : console.log("Ping Daemon Failed");
+            return finalRes;
         });
     }
     // 创建守护进程
@@ -89,18 +89,6 @@ class ProgressManagerClient {
         });
         daemon_process.unref();
         return daemon_process;
-    }
-    // 检查是否已经运行Daemon
-    _checkDaemon() {
-        const isPM2Running = this.envManager.getEnv("LZY_PM2_RUNNING");
-        const pid = this.envManager.getEnv("LZY_PM2_PID");
-        if (isPM2Running == "true") {
-            console.log(`LZY_PM2 Already Running: PID:${pid}`);
-            return true;
-        }
-        else {
-            return false;
-        }
     }
     // 解析config字段
     _parseConfig(config) {

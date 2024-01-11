@@ -9,6 +9,7 @@ class ClusterWatcher {
     constructor(god) {
         this.god = god;
     }
+    //TODO 开启子进程时启动定时任务  监控/重启子进程
     watch() { }
 }
 exports.default = ClusterWatcher;

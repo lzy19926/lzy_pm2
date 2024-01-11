@@ -74,15 +74,9 @@ class EventSubClient {
         return new Promise((resolve, reject) => {
             console.log("[PING PM2] Trying to connect to server");
             this.sub_sock.once('reconnect attempt', function () {
-                console.log("Daemon Not Launched");
-                resolve(false);
-            });
-            this.sub_sock.once('error', function () {
-                console.log("Ping Daemon Error");
                 resolve(false);
             });
             this.sub_sock.once('connect', function () {
-                console.log("Daemon Alive");
                 resolve(true);
             });
             setTimeout(() => {

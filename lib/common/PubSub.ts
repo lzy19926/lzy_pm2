@@ -45,8 +45,6 @@ export class EventPubServer {
   emit(event: string, message: any) {
     return this.pub.emit(event, message);
   }
-
-
 }
 
 export class EventSubClient {
@@ -82,17 +80,10 @@ export class EventSubClient {
       console.log("[PING PM2] Trying to connect to server");
 
       this.sub_sock.once('reconnect attempt', function () {
-        console.log("Daemon Not Launched");
-        resolve(false)
-      })
-
-      this.sub_sock.once('error', function () {
-        console.log("Ping Daemon Error");
         resolve(false)
       })
 
       this.sub_sock.once('connect', function () {
-        console.log("Daemon Alive");
         resolve(true)
       })
 

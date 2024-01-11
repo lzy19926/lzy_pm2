@@ -52,17 +52,22 @@ class API {
         this.cwd = process.cwd(); // 当前终端目录
         this.client = new Client_1.default(this.config); // PM2客户端
     }
+    // 启动一个进程
     start(cmd) {
-        if (Utils.isConfigFile(cmd)) {
-            this._startConfigJson(cmd, () => this.list());
-        }
-        else {
-            this._startScript(cmd, () => this.list());
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._prepareClient();
+            if (Utils.isConfigFile(cmd)) {
+                this._startConfigJson(cmd, () => this.list());
+            }
+            else {
+                this._startScript(cmd, () => this.list());
+            }
+        });
     }
     //TODO 打印50行日志 重写这部分实现
     logs(idOrName) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this._prepareClient();
             const logPath = yield this.client.executeRemote("getProcessLogsFile", [parseInt(idOrName)]);
             if (!logPath) {
                 return console.error(`错误id:${idOrName}`);
@@ -77,17 +82,25 @@ class API {
             });
         });
     }
-    delete() { }
-    deleteAll() { }
+    // 显示所有进程列表
+    list() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._prepareClient();
+            const list = yield this.client.executeRemote("getMonitorData");
+            (0, terminal_table_1.showTerminalList)(list);
+        });
+    }
     // pm2整体关停
     kill() {
         this.client.killDaemon();
     }
-    // 显示所有进程列表
-    list() {
+    //TODO 删除一个进程
+    delete() { }
+    //TODO 删除所有进程
+    deleteAll() { }
+    _prepareClient() {
         return __awaiter(this, void 0, void 0, function* () {
-            const list = yield this.client.executeRemote("getMonitorData");
-            (0, terminal_table_1.showTerminalList)(list);
+            return yield this.client.launchDaemon();
         });
     }
     _startConfigJson(cmd, cb) { }

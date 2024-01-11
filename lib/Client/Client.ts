@@ -24,7 +24,6 @@ export default class ProgressManagerClient {
 
   constructor(config?: ClientConfig) {
     this._parseConfig(config)
-    this.launchDaemon()
   }
 
   // 执行远程命令,通过RPC直接调用Daemon方法
@@ -34,7 +33,7 @@ export default class ProgressManagerClient {
 
   // 启动守护进程
   async launchDaemon() {
-    if (this._checkDaemon()) return
+    if (await this.pingDaemon()) return
 
     const daemon = this._spawnDaemon()
 
@@ -44,25 +43,33 @@ export default class ProgressManagerClient {
     console.log(`Daemon Running PID:${daemon.pid}`);
   }
 
-  // TODO杀死守护进程(由进程内部关停)
+  // 杀死守护进程(由进程内部关停)
   async killDaemon() {
-    const pid = this.envManager.getEnv("LZY_PM2_PID")
-
-    try {
-      process.kill(pid, 'SIGTERM');
-      console.log(`Daemon killed SUCCESS PID:${pid}`);
-    } catch (e) {
-      console.error(`Daemon killed FAILED PID:${pid}`, e);
-    } finally {
-      this.envManager.setEnv("LZY_PM2_RUNNING", "false")
-      this.envManager.setEnv("LZY_PM2_PID", "")
+    if (!await this.pingDaemon()) {
+      return console.log(`Daemon Already Killed`);
     }
+
+    this.executeRemote('killMe');
+
+    this.envManager.setEnv("LZY_PM2_RUNNING", "false")
+    this.envManager.setEnv("LZY_PM2_PID", "")
+
+    console.log(`Daemon killed SUCCESS`);
   }
 
-  // ping守护进程
-  async pingDaemon() {
-    const pid = await this.executeRemote("ping")
-    console.log(`Daemon running,PID:${pid}`);
+  // ping守护进程(retry * 3)
+  async pingDaemon(retry: number = 3) {
+    let finalRes = false
+
+    while (!finalRes && retry-- > 0) {
+      finalRes = await this.subClient.pingServer()
+    }
+
+    finalRes
+      ? console.log("Daemon Alive")
+      : console.log("Ping Daemon Failed")
+
+    return finalRes
   }
 
   // 创建守护进程
@@ -84,19 +91,6 @@ export default class ProgressManagerClient {
     daemon_process.unref();
 
     return daemon_process
-  }
-
-  // 检查是否已经运行Daemon
-  private _checkDaemon(): boolean {
-    const isPM2Running = this.envManager.getEnv("LZY_PM2_RUNNING")
-    const pid = this.envManager.getEnv("LZY_PM2_PID")
-
-    if (isPM2Running == "true") {
-      console.log(`LZY_PM2 Already Running: PID:${pid}`);
-      return true
-    } else {
-      return false
-    }
   }
 
   // 解析config字段

@@ -8,5 +8,6 @@ import God from './God';
 
 export default class ClusterWatcher {
   constructor(private god: God) { }
+  //TODO 开启子进程时启动定时任务  监控/重启子进程
   watch() { }
 }

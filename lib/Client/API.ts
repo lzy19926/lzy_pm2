@@ -20,7 +20,13 @@ export default class API {
 
   constructor(private config?: ClientConfig) { }
 
-  start(cmd: string) {
+
+  // 启动一个进程
+  async start(cmd: string) {
+
+    await this._prepareClient()
+
+
     if (Utils.isConfigFile(cmd)) {
       this._startConfigJson(cmd, () => this.list())
     } else {
@@ -30,6 +36,9 @@ export default class API {
 
   //TODO 打印50行日志 重写这部分实现
   async logs(idOrName: string) {
+
+    await this._prepareClient()
+
     const logPath = await this.client.executeRemote("getProcessLogsFile", [parseInt(idOrName)])
 
     if (!logPath) {
@@ -48,19 +57,26 @@ export default class API {
     })
   }
 
-  delete() { }
-
-  deleteAll() { }
+  // 显示所有进程列表
+  async list() {
+    await this._prepareClient()
+    const list = await this.client.executeRemote("getMonitorData")
+    showTerminalList(list)
+  }
 
   // pm2整体关停
   kill() {
     this.client.killDaemon()
   }
 
-  // 显示所有进程列表
-  async list() {
-    const list = await this.client.executeRemote("getMonitorData")
-    showTerminalList(list)
+  //TODO 删除一个进程
+  delete() { }
+
+  //TODO 删除所有进程
+  deleteAll() { }
+
+  private async _prepareClient() {
+    return await this.client.launchDaemon()
   }
 
   private _startConfigJson(cmd: string, cb: Function) { }
