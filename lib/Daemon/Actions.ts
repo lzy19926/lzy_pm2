@@ -51,8 +51,32 @@ export default class ActionMethods {
 
     if (typeof child_process !== 'undefined') {
       newConfig.pid = child_process.pid as number
+      newConfig.status = "running"
       this.god.logManager.startLogging(child_process, newConfig)
     }
+  }
+
+  // TODO 停止进程  kill进程 但持续监控  可重启
+  stopProcess(id: number) {
+    const config = this.god.clusterDB.get(id)
+    const pid = config?.pid
+
+    if (!pid) return
+
+    try {
+      process.kill(pid)
+      config.status = "stop"
+      console.log(`成功结束进程  PID:${pid}`)
+      return { result: true, pid }
+    } catch (e) {
+      console.log(`结束进程失败  PID:${pid}`, e)
+      return { result: false, pid }
+    }
+  }
+
+  // TODO 删除进程  kill进程 移除监控Cron
+  deleteProcess(id: number) {
+
   }
 
   // kill守护进程

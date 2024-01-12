@@ -20,21 +20,19 @@ export default class API {
 
   constructor(private config?: ClientConfig) { }
 
-
   // 启动一个进程
   async start(cmd: string) {
 
     await this._prepareClient()
 
-
     if (Utils.isConfigFile(cmd)) {
-      this._startConfigJson(cmd, () => this.list())
+      this._startConfigJson(cmd)
     } else {
-      this._startScript(cmd, () => this.list())
+      this._startScript(cmd)
     }
   }
 
-  //TODO 打印50行日志 重写这部分实现
+  // 打印50行日志 重写这部分实现
   async logs(idOrName: string) {
 
     await this._prepareClient()
@@ -60,35 +58,55 @@ export default class API {
   // 显示所有进程列表
   async list() {
     await this._prepareClient()
-    const list = await this.client.executeRemote("getMonitorData")
-    showTerminalList(list)
+    await this._showList()
   }
+
+  // 停止一个进程
+  async stop(idOrName: string) {
+    if (idOrName == "0") {
+      return console.log("关停Daemon请使用 lzy_pm2 kill命令")
+    }
+
+    const { result, pid } = await this.client.executeRemote("stopProcess", [parseInt(idOrName)])
+    result === true
+      ? console.log(`成功结束进程  PID:${pid}`)
+      : console.log(`结束进程失败  PID:${pid}`)
+
+    await this._showList()
+  }
+
+  //TODO 停止所有进程
+  stopAll(idOrName: string) {
+
+  }
+
+  //TODO 删除一个进程
+  delete(idOrName: string) {
+
+  }
+
+  //TODO 删除所有进程
+  deleteAll(idOrName: string) { }
+
 
   // pm2整体关停
   kill() {
     this.client.killDaemon()
   }
 
-  //TODO 删除一个进程
-  delete() { }
-
-  //TODO 删除所有进程
-  deleteAll() { }
-
   private async _prepareClient() {
     return await this.client.launchDaemon()
   }
 
-  private _startConfigJson(cmd: string, cb: Function) { }
+  private _startConfigJson(cmd: string) { }
 
-  private _startScript(cmd: string, cb: Function) {
+  private async _startScript(cmd: string) {
     const that = this
     const { scriptPath, options } = Utils.parseCommand(cmd)
 
-    startNewProcessPath()
+    await startNewProcessPath()
 
-    // 执行回调
-    cb()
+    await this._showList()
 
     // 通过path启动一个新的进程
     async function startNewProcessPath() {
@@ -102,5 +120,10 @@ export default class API {
     }
     // 通过path重启一个进程
     function restartExistingProcessPath() { }
+  }
+
+  private async _showList() {
+    const list = await this.client.executeRemote("getMonitorData")
+    showTerminalList(list)
   }
 }

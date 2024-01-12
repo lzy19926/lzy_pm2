@@ -24,7 +24,7 @@ const HEAD_WIDTH_MAP = {
 
 function formatConfig(configs: AppConfig[]) {
   return configs.map(c => {
-    return [c.id, c.name, "", "", c.pid, ""]
+    return [c.id, c.name, "", "", c.pid, "", "", c.status, "", ""]
   })
 }
 
