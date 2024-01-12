@@ -14,7 +14,8 @@ export interface AppConfig {
   script: string
   scriptFullPath: string
   logPath: string
-  mode: "fork" | "cluster"
+  mode: "fork" | "cluster",
+  status: "stop" | "running" | "pending"
   options: Record<string, boolean>
 }
 
@@ -26,15 +27,10 @@ export default class ClusterDB {
   private _map = new Map<number, AppConfig>()
   private _count = 0
   constructor(private god: God) { }
-
+  //TODO 提供name支持
   get(idOrName: string | number) {
-
     if (typeof idOrName == 'number') {
       return this._map.get(idOrName)
-    }
-    //TODO 提供name支持
-    else {
-      return this._map.get(0)
     }
   }
 
@@ -62,6 +58,7 @@ export default class ClusterDB {
       scriptFullPath: tpl.scriptFullPath || "",
       logPath: tpl.logPath || "",
       mode: tpl.mode || "fork",
+      status: "pending",
       options: tpl.options || {},
     };
 
