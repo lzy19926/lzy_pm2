@@ -57,14 +57,14 @@ class API {
         return __awaiter(this, void 0, void 0, function* () {
             yield this._prepareClient();
             if (Utils.isConfigFile(cmd)) {
-                this._startConfigJson(cmd, () => this.list());
+                this._startConfigJson(cmd);
             }
             else {
-                this._startScript(cmd, () => this.list());
+                this._startScript(cmd);
             }
         });
     }
-    //TODO 打印50行日志 重写这部分实现
+    // 打印50行日志 重写这部分实现
     logs(idOrName) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this._prepareClient();
@@ -86,43 +86,66 @@ class API {
     list() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this._prepareClient();
-            const list = yield this.client.executeRemote("getMonitorData");
-            (0, terminal_table_1.showTerminalList)(list);
+            yield this._showList();
         });
     }
+    // 停止一个进程
+    stop(idOrName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (idOrName == "0") {
+                return console.log("关停Daemon请使用 lzy_pm2 kill命令");
+            }
+            const { result, pid } = yield this.client.executeRemote("stopProcess", [parseInt(idOrName)]);
+            result === true
+                ? console.log(`成功结束进程  PID:${pid}`)
+                : console.log(`结束进程失败  PID:${pid}`);
+            yield this._showList();
+        });
+    }
+    //TODO 停止所有进程
+    stopAll(idOrName) {
+    }
+    //TODO 删除一个进程
+    delete(idOrName) {
+    }
+    //TODO 删除所有进程
+    deleteAll(idOrName) { }
     // pm2整体关停
     kill() {
         this.client.killDaemon();
     }
-    //TODO 删除一个进程
-    delete() { }
-    //TODO 删除所有进程
-    deleteAll() { }
     _prepareClient() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.client.launchDaemon();
         });
     }
-    _startConfigJson(cmd, cb) { }
-    _startScript(cmd, cb) {
-        const that = this;
-        const { scriptPath, options } = Utils.parseCommand(cmd);
-        startNewProcessPath();
-        // 执行回调
-        cb();
-        // 通过path启动一个新的进程
-        function startNewProcessPath() {
-            return __awaiter(this, void 0, void 0, function* () {
-                const configTpl = {};
-                configTpl.cwd = that.cwd;
-                configTpl.script = scriptPath;
-                configTpl.options = options;
-                configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
-                yield that.client.executeRemote("createProcess", [configTpl]);
-            });
-        }
-        // 通过path重启一个进程
-        function restartExistingProcessPath() { }
+    _startConfigJson(cmd) { }
+    _startScript(cmd) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const that = this;
+            const { scriptPath, options } = Utils.parseCommand(cmd);
+            yield startNewProcessPath();
+            yield this._showList();
+            // 通过path启动一个新的进程
+            function startNewProcessPath() {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const configTpl = {};
+                    configTpl.cwd = that.cwd;
+                    configTpl.script = scriptPath;
+                    configTpl.options = options;
+                    configTpl.scriptFullPath = path_1.default.resolve(that.cwd, scriptPath);
+                    yield that.client.executeRemote("createProcess", [configTpl]);
+                });
+            }
+            // 通过path重启一个进程
+            function restartExistingProcessPath() { }
+        });
+    }
+    _showList() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const list = yield this.client.executeRemote("getMonitorData");
+            (0, terminal_table_1.showTerminalList)(list);
+        });
     }
 }
 exports.default = API;

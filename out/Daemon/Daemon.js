@@ -17,6 +17,7 @@ class Daemon {
     start() {
         const newConfig = this.god.clusterDB.create({ name: "Daemon" });
         newConfig.pid = process.pid;
+        newConfig.status = "running";
         newConfig.logPath = node_path_1.default.resolve(__dirname, "../../cache/0_logFile.json");
         setInterval(() => console.log("-----Daemon Running-----"), 1000 * 60);
     }

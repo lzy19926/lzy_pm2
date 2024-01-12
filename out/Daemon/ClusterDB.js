@@ -11,13 +11,10 @@ class ClusterDB {
         this._map = new Map();
         this._count = 0;
     }
+    //TODO 提供name支持
     get(idOrName) {
         if (typeof idOrName == 'number') {
             return this._map.get(idOrName);
-        }
-        //TODO 提供name支持
-        else {
-            return this._map.get(0);
         }
     }
     // 获取全部config并排序
@@ -42,6 +39,7 @@ class ClusterDB {
             scriptFullPath: tpl.scriptFullPath || "",
             logPath: tpl.logPath || "",
             mode: tpl.mode || "fork",
+            status: "pending",
             options: tpl.options || {},
         };
         this.set(newConfig);

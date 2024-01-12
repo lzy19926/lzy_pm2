@@ -20,6 +20,12 @@ switch (command) {
   case "kill":
     pm2.kill();
     break;
+  case "stop":
+    pm2.stop(arg);
+    break;
+  default:
+    console.warn(`Unknown Command :${command}`);
+    process.exit(1)
 }
 
 
