@@ -105,7 +105,7 @@ class API {
     //TODO 停止所有进程
     stopAll() {
     }
-    //TODO 删除一个进程
+    // 删除一个进程
     delete(idOrName) {
         return __awaiter(this, void 0, void 0, function* () {
             if (idOrName == "0") {
@@ -115,6 +115,7 @@ class API {
             result === true
                 ? console.log(`成功删除进程  PID:${pid}`)
                 : console.log(`删除进程失败  PID:${pid}`);
+            yield this._showList();
         });
     }
     //TODO 删除所有进程

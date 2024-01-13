@@ -80,7 +80,7 @@ export default class API {
 
   }
 
-  //TODO 删除一个进程
+  // 删除一个进程
   async delete(idOrName: string) {
     if (idOrName == "0") {
       return console.log("关停Daemon请使用 lzy_pm2 kill命令")
@@ -90,6 +90,8 @@ export default class API {
     result === true
       ? console.log(`成功删除进程  PID:${pid}`)
       : console.log(`删除进程失败  PID:${pid}`)
+
+    await this._showList()
   }
 
   //TODO 删除所有进程
