@@ -103,13 +103,23 @@ class API {
         });
     }
     //TODO 停止所有进程
-    stopAll(idOrName) {
+    stopAll() {
     }
     //TODO 删除一个进程
     delete(idOrName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (idOrName == "0") {
+                return console.log("关停Daemon请使用 lzy_pm2 kill命令");
+            }
+            const { result, pid } = yield this.client.executeRemote("deleteProcess", [parseInt(idOrName)]);
+            result === true
+                ? console.log(`成功删除进程  PID:${pid}`)
+                : console.log(`删除进程失败  PID:${pid}`);
+        });
     }
     //TODO 删除所有进程
-    deleteAll(idOrName) { }
+    deleteAll(idOrName) {
+    }
     // pm2整体关停
     kill() {
         this.client.killDaemon();
@@ -119,7 +129,10 @@ class API {
             return yield this.client.launchDaemon();
         });
     }
-    _startConfigJson(cmd) { }
+    _startConfigJson(cmd) {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
     _startScript(cmd) {
         return __awaiter(this, void 0, void 0, function* () {
             const that = this;

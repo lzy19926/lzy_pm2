@@ -28,6 +28,10 @@ class ClusterDB {
         this._map.set(this._count, config);
         this._count++;
     }
+    // 移除一个config
+    remove(id) {
+        return this._map.delete(id);
+    }
     // 创建一个新Config
     create(tpl = {}) {
         let newConfig = {

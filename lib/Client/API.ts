@@ -76,18 +76,26 @@ export default class API {
   }
 
   //TODO 停止所有进程
-  stopAll(idOrName: string) {
+  stopAll() {
 
   }
 
   //TODO 删除一个进程
-  delete(idOrName: string) {
+  async delete(idOrName: string) {
+    if (idOrName == "0") {
+      return console.log("关停Daemon请使用 lzy_pm2 kill命令")
+    }
 
+    const { result, pid } = await this.client.executeRemote("deleteProcess", [parseInt(idOrName)])
+    result === true
+      ? console.log(`成功删除进程  PID:${pid}`)
+      : console.log(`删除进程失败  PID:${pid}`)
   }
 
   //TODO 删除所有进程
-  deleteAll(idOrName: string) { }
+  deleteAll(idOrName: string) {
 
+  }
 
   // pm2整体关停
   kill() {
@@ -98,7 +106,9 @@ export default class API {
     return await this.client.launchDaemon()
   }
 
-  private _startConfigJson(cmd: string) { }
+  private async _startConfigJson(cmd: string) {
+
+  }
 
   private async _startScript(cmd: string) {
     const that = this

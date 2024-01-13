@@ -23,6 +23,9 @@ switch (command) {
   case "stop":
     pm2.stop(arg);
     break;
+  case "delete":
+    pm2.delete(arg);
+    break;
   default:
     console.warn(`Unknown Command :${command}`);
     process.exit(1)

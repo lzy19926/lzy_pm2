@@ -47,6 +47,11 @@ export default class ClusterDB {
     this._count++
   }
 
+  // 移除一个config
+  remove(id: number) {
+    return this._map.delete(id)
+  }
+
   // 创建一个新Config
   create(tpl: AppConfigTpl = {}): AppConfig {
     let newConfig: AppConfig = {

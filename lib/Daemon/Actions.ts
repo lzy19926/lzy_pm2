@@ -61,7 +61,7 @@ export default class ActionMethods {
     const config = this.god.clusterDB.get(id)
     const pid = config?.pid
 
-    if (!pid) return
+    if (!pid) return { result: false, pid }
 
     try {
       process.kill(pid)
@@ -76,7 +76,26 @@ export default class ActionMethods {
 
   // TODO 删除进程  kill进程 移除监控Cron
   deleteProcess(id: number) {
+    const config = this.god.clusterDB.get(id)
+    const { result: stopSucceed, pid } = this.stopProcess(id)
 
+    // 成功停止
+    if (stopSucceed) {
+      this.god.clusterDB.remove(id)
+      console.log(`成功删除进程  PID:${pid}`)
+      return { result: true, pid }
+    }
+    // 已经停止
+    else if (config?.status == "stop" && !stopSucceed) {
+      this.god.clusterDB.remove(id)
+      console.log(`成功删除进程  PID:${pid}`)
+      return { result: true, pid }
+    }
+    // 停止失败
+    else {
+      console.log(`删除进程失败  PID:${pid}`)
+      return { result: false, pid }
+    }
   }
 
   // kill守护进程
