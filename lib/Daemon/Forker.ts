@@ -7,20 +7,10 @@
 import { spawn } from 'node:child_process'
 
 import type God from "./God"
-import type { Process } from './LogManager'
 import type { AppConfig } from './ClusterDB'
-import type { ChildProcessWithoutNullStreams } from 'node:child_process'
+
 export default class Forker {
   constructor(private god: God) { }
-
-  // 处理中断退出重启逻辑
-  unstableRestart(proc: ChildProcessWithoutNullStreams, pm2_env: AppConfig) {
-    try {
-      proc.kill && proc.kill();
-    }
-  }
-
-
 
   // forkMode创建进程
   forkMode(pm2_env: AppConfig) {
@@ -41,14 +31,6 @@ export default class Forker {
       console.log(`App [${pm2_env.name}:${pm2_env.id}] 由-Fork-模式启动`)
 
       var child_process = spawn(command, spawnArgs, spawnOptions)
-
-
-      child_process.once("exit", (code, signal) => {
-        this.unstableRestart(child_process, pm2_env)
-      })
-      child_process.once("error", (err) => {
-        this.unstableRestart(child_process, pm2_env)
-      })
 
       return child_process
 

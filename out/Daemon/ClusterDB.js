@@ -42,6 +42,7 @@ class ClusterDB {
             script: tpl.script || "",
             scriptFullPath: tpl.scriptFullPath || "",
             logPath: tpl.logPath || "",
+            unstableRestart: 0,
             mode: tpl.mode || "fork",
             status: "pending",
             options: tpl.options || {},

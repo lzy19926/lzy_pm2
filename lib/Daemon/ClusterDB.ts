@@ -16,7 +16,7 @@ export interface AppConfig {
   logPath: string
   unstableRestart: number
   mode: "fork" | "cluster",
-  status: "stop" | "running" | "pending"
+  status: "stop" | "running" | "pending" | "restarting" | "error"
   options: Record<string, boolean>
 }
 
