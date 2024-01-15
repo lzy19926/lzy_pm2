@@ -12,7 +12,7 @@ import type { ChildProcess } from 'child_process'
 import type { AppConfig } from './ClusterDB'
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 
-type Process = ChildProcess | ChildProcessWithoutNullStreams | NodeJS.Process
+export type Process = ChildProcess | ChildProcessWithoutNullStreams | NodeJS.Process
 
 export default class LogManager {
 

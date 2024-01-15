@@ -14,6 +14,7 @@ export interface AppConfig {
   script: string
   scriptFullPath: string
   logPath: string
+  unstableRestart: number
   mode: "fork" | "cluster",
   status: "stop" | "running" | "pending"
   options: Record<string, boolean>
@@ -62,6 +63,7 @@ export default class ClusterDB {
       script: tpl.script || "",
       scriptFullPath: tpl.scriptFullPath || "",
       logPath: tpl.logPath || "",
+      unstableRestart: 0,
       mode: tpl.mode || "fork",
       status: "pending",
       options: tpl.options || {},
