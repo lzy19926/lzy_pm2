@@ -4,6 +4,8 @@
  *  @author lzy19926
 *******************************************/
 
+// TODO 标准化API返回
+
 import type God from "./God"
 import type { AppConfigTpl } from './ClusterDB'
 
@@ -43,65 +45,21 @@ export default class ActionMethods {
 
   // 创建子进程
   createProcess(tpl: AppConfigTpl) {
-    const newConfig = this.god.clusterDB.create(tpl)
-
-    const child_process = newConfig.mode === "fork"
-      ? this.god.forker.forkMode(newConfig)
-      : this.god.forker.clusterMode(newConfig)
-
-    if (typeof child_process !== 'undefined') {
-      newConfig.pid = child_process.pid as number
-      newConfig.status = "running"
-      this.god.logManager.startLogging(child_process, newConfig)
-    }
+    return this.god.createProcess(tpl)
   }
 
-  // TODO 停止进程  kill进程 但持续监控  可重启
+  // 停止进程
   stopProcess(id: number) {
-    const config = this.god.clusterDB.get(id)
-    const pid = config?.pid
-
-    if (!pid) return { result: false, pid }
-
-    try {
-      process.kill(pid)
-      config.status = "stop"
-      console.log(`成功结束进程  PID:${pid}`)
-      return { result: true, pid }
-    } catch (e) {
-      console.log(`结束进程失败  PID:${pid}`, e)
-      return { result: false, pid }
-    }
+    return this.god.stopProcess(id)
   }
 
-  // TODO 删除进程  kill进程 移除监控Cron
+  // 删除进程
   deleteProcess(id: number) {
-    const config = this.god.clusterDB.get(id)
-    const { result: stopSucceed, pid } = this.stopProcess(id)
-
-    // 成功停止
-    if (stopSucceed) {
-      this.god.clusterDB.remove(id)
-      console.log(`成功删除进程  PID:${pid}`)
-      return { result: true, pid }
-    }
-    // 已经停止
-    else if (config?.status == "stop" && !stopSucceed) {
-      this.god.clusterDB.remove(id)
-      console.log(`成功删除进程  PID:${pid}`)
-      return { result: true, pid }
-    }
-    // 停止失败
-    else {
-      console.log(`删除进程失败  PID:${pid}`)
-      return { result: false, pid }
-    }
+    return this.god.deleteProcess(id)
   }
 
   // kill守护进程
   killMe() {
-    this.god.RPCServer.unBind()
-    this.god.pubServer.unBind()
-    process.exit(1)
+    return this.god.killMe()
   }
 }
